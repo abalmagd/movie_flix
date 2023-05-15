@@ -7,7 +7,7 @@ import 'app/riverpod/theme/theme_controller.dart';
 import 'core/local_storage.dart';
 import 'core/routes.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final sharedPreferences = await SharedPreferences.getInstance();
 

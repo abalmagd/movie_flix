@@ -7,11 +7,11 @@ import '../riverpod/theme/theme_controller.dart';
 class PrimaryAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const PrimaryAppBar({
     Key? key,
-    required this.text,
+    required this.title,
     this.centerTitle = true,
   }) : super(key: key);
 
-  final String text;
+  final String title;
   final bool centerTitle;
 
   @override
@@ -23,7 +23,7 @@ class PrimaryAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final call = ref.read(themeControllerProvider.notifier);
     return AppBar(
       title: Text(
-        text,
+        title,
         style: theme.textTheme.titleLarge
             ?.copyWith(color: theme.colorScheme.primary),
       ),

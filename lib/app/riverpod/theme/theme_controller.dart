@@ -34,7 +34,7 @@ class ThemeController extends StateNotifier<ThemeState> {
     state = state.copyWith(
       themeMode: EnumToString.fromString(
         ThemeMode.values,
-        localThemeMode as String,
+        localThemeMode == null ? 'system' : localThemeMode as String,
       ),
     );
   }

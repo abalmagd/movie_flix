@@ -18,7 +18,7 @@ class LandingScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final brightness = Theme.of(context).brightness;
     return Scaffold(
-      appBar: const PrimaryAppBar(text: Strings.appName),
+      appBar: const PrimaryAppBar(title: Strings.appName),
       body: Column(
         children: [
           Text(

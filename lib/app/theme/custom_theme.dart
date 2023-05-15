@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:movie_flix/app/environment/constants.dart';
 import 'package:movie_flix/app/environment/spacing.dart';
 
 import 'palette.dart';
@@ -7,6 +8,7 @@ import 'palette.dart';
 class CustomTheme {
   static ThemeData darkTheme(BuildContext context) {
     final theme = Theme.of(context);
+    final size = MediaQuery.of(context).size;
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSwatch(
@@ -38,6 +40,12 @@ class CustomTheme {
         displayColor: Palette.white,
         bodyColor: Palette.white,
       ),
+      drawerTheme: DrawerThemeData(
+        backgroundColor: Palette.almostBlack,
+        width: size.width * Constants.drawerWidthFactor,
+        elevation: 0,
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
@@ -63,6 +71,7 @@ class CustomTheme {
 
   static ThemeData lightTheme(BuildContext context) {
     final theme = Theme.of(context);
+    final size = MediaQuery.of(context).size;
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSwatch(
@@ -94,6 +103,12 @@ class CustomTheme {
       textTheme: theme.primaryTextTheme.apply(
         displayColor: Palette.black,
         bodyColor: Palette.black,
+      ),
+      drawerTheme: DrawerThemeData(
+        backgroundColor: Palette.grey50,
+        width: size.width * Constants.drawerWidthFactor,
+        elevation: 0,
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
