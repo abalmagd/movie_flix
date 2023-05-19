@@ -8,7 +8,14 @@ final dioProvider = Provider<Dio>(
     return Dio(
       BaseOptions(
         baseUrl: RemoteEnvironment.baseUrl,
-        headers: {'Authorization': 'Bearer ${RemoteEnvironment.v4AuthKey}'},
+        queryParameters: {
+          'api_key': RemoteEnvironment.apiKeyV3,
+          'language': 'en-US',
+        },
+        headers: {
+          'Authorization': 'Bearer ${RemoteEnvironment.apiKeyV4}',
+          'accept': 'application/json',
+        },
       ),
     );
   },

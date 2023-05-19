@@ -10,10 +10,8 @@ final sharedPrefsProvider = Provider<SharedPrefs>((ref) {
   return SharedPrefs(sharedPreferences: sharedPrefs);
 });
 
-class SharedPrefs {
-  SharedPrefs({
-    required this.sharedPreferences,
-  });
+class SharedPrefs implements SharedPrefsKeys {
+  SharedPrefs({required this.sharedPreferences});
 
   final SharedPreferences sharedPreferences;
 
@@ -39,9 +37,10 @@ class SharedPrefs {
   Future<bool> remove({required String key}) async =>
       await sharedPreferences.remove(key);
 
-  Future<void> clear() async => await sharedPreferences.clear();
+  Future<bool> clear() async => await sharedPreferences.clear();
 }
 
 class SharedPrefsKeys {
   static const themeMode = 'themeMode';
+  static const session = 'session';
 }

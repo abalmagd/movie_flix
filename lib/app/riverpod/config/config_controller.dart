@@ -3,20 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/local_storage.dart';
-import 'theme_state.dart';
+import 'config_state.dart';
 
-final themeControllerProvider =
-    StateNotifierProvider.autoDispose<ThemeController, ThemeState>(
+final configControllerProvider =
+    StateNotifierProvider.autoDispose<ConfigController, ConfigState>(
   (ref) {
-    return ThemeController(
-      const ThemeState(),
+    return ConfigController(
+      const ConfigState(),
       ref.watch(sharedPrefsProvider),
     );
   },
 );
 
-class ThemeController extends StateNotifier<ThemeState> {
-  ThemeController(ThemeState state, this._sharedPrefs) : super(state) {
+class ConfigController extends StateNotifier<ConfigState> {
+  ConfigController(ConfigState state, this._sharedPrefs) : super(state) {
     getThemeMode();
   }
 

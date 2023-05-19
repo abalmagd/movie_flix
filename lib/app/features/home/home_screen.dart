@@ -41,7 +41,19 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
             Expanded(
-              child: TabBarView(children: tabs),
+              child: TabBarView(
+                children: tabs
+                    .map(
+                      (e) => SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: Spacing.s8,
+                          horizontal: Spacing.s12,
+                        ),
+                        child: e,
+                      ),
+                    )
+                    .toList(),
+              ),
             ),
           ],
         ),
@@ -55,72 +67,69 @@ class MoviesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(Spacing.s12),
-      child: Column(
-        children: [
-          /*Latest*/
-          Row(
-            children: [
-              const Text(Strings.latest),
-              TextButton(
-                onPressed: () {},
-                child: const Text(Strings.viewAll),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 300,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) => const Placeholder(),
-              separatorBuilder: (context, index) =>
-                  const SizedBox(width: Spacing.s6),
-              itemCount: 5,
+    return Column(
+      children: [
+        /*Latest*/
+        Row(
+          children: [
+            const Text(Strings.latest),
+            TextButton(
+              onPressed: () {},
+              child: const Text(Strings.viewAll),
             ),
+          ],
+        ),
+        SizedBox(
+          height: 300,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) => const Placeholder(),
+            separatorBuilder: (context, index) =>
+                const SizedBox(width: Spacing.s6),
+            itemCount: 5,
           ),
-          /*Trending*/
-          Row(
-            children: [
-              const Text(Strings.trending),
-              TextButton(
-                onPressed: () {},
-                child: const Text(Strings.viewAll),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 300,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) => const Placeholder(),
-              separatorBuilder: (context, index) =>
-                  const SizedBox(width: Spacing.s6),
-              itemCount: 5,
+        ),
+        /*Trending*/
+        Row(
+          children: [
+            const Text(Strings.trending),
+            TextButton(
+              onPressed: () {},
+              child: const Text(Strings.viewAll),
             ),
+          ],
+        ),
+        SizedBox(
+          height: 300,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) => const Placeholder(),
+            separatorBuilder: (context, index) =>
+                const SizedBox(width: Spacing.s6),
+            itemCount: 5,
           ),
-          /*Upcoming*/
-          Row(
-            children: [
-              const Text(Strings.upcoming),
-              TextButton(
-                onPressed: () {},
-                child: const Text(Strings.viewAll),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 300,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) => const Placeholder(),
-              separatorBuilder: (context, index) =>
-                  const SizedBox(width: Spacing.s6),
-              itemCount: 5,
+        ),
+        /*Upcoming*/
+        Row(
+          children: [
+            const Text(Strings.upcoming),
+            TextButton(
+              onPressed: () {},
+              child: const Text(Strings.viewAll),
             ),
+          ],
+        ),
+        SizedBox(
+          height: 300,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) => const Placeholder(),
+            separatorBuilder: (context, index) =>
+                const SizedBox(width: Spacing.s6),
+            itemCount: 5,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

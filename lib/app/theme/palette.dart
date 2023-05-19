@@ -6,6 +6,10 @@ class Palette {
   static const black = Colors.black;
   static const transparent = Colors.transparent;
 
+  static const danger = Color(0xFFFF5252);
+  static const ok = Color(0xFF4CAF50);
+  static const neutral = Color(0xFF607D8B);
+
   // Dark theme palette
   static const almostBlack = Color(0xFF212121);
   static const red100 = Color(0xFFffcdd2);

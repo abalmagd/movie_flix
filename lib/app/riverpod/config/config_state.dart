@@ -8,17 +8,17 @@ import 'package:flutter/material.dart';
 *  Make class handle any config updates
 * */
 @immutable
-class ThemeState extends Equatable {
-  const ThemeState({
+class ConfigState extends Equatable {
+  const ConfigState({
     this.themeMode = ThemeMode.system,
   });
 
   final ThemeMode themeMode;
 
-  ThemeState copyWith({
+  ConfigState copyWith({
     ThemeMode? themeMode,
   }) {
-    return ThemeState(
+    return ConfigState(
       themeMode: themeMode ?? this.themeMode,
     );
   }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/app/widgets/theme_icon_button.dart';
 
-import '../riverpod/theme/theme_controller.dart';
+import '../riverpod/config/config_controller.dart';
 
 class PrimaryAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const PrimaryAppBar({
@@ -20,7 +20,7 @@ class PrimaryAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final call = ref.read(themeControllerProvider.notifier);
+    final call = ref.read(configControllerProvider.notifier);
     return AppBar(
       title: Text(
         title,

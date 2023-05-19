@@ -12,4 +12,6 @@ class Strings {
   static const movies = 'Movies';
   static const series = 'Series';
   static const actors = 'Actors';
+  static const logout = 'Logout';
+  static const guestSession = 'Guest Session';
 }

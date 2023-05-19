@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import 'utils.dart';
 
+/// Default class for handling errors & exceptions
 class Failure implements Exception {
   final String? message;
   final int? code;
@@ -10,7 +11,7 @@ class Failure implements Exception {
   Failure({
     required this.message,
     required this.code,
-    required this.exception,
+    this.exception,
   });
 
   static Failure handleExceptions(e) {
@@ -30,6 +31,11 @@ class Failure implements Exception {
       );
     }
   }
+
+  void toast() => Utils.toast(
+        message: message ?? 'Something went wrong!',
+        severity: ToastSeverity.danger,
+      );
 
   @override
   String toString() =>
