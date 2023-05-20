@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:movie_flix/app/environment/constants.dart';
 import 'package:movie_flix/app/environment/spacing.dart';
 
@@ -66,6 +65,7 @@ class CustomTheme {
         ),
       ),
       splashColor: Palette.white,
+      tabBarTheme: const TabBarTheme(dividerColor: Palette.neutral),
     );
   }
 
@@ -129,6 +129,7 @@ class CustomTheme {
           ),
         ),
       ),
+      tabBarTheme: const TabBarTheme(dividerColor: Palette.neutral),
     );
   }
 }

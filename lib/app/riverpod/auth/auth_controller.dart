@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/remote/api/auth/auth_service.dart';
+import 'package:movie_flix/remote/environment_variables.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../core/local_storage.dart';
 import '../../../core/utils.dart';
@@ -45,6 +48,13 @@ class AuthController extends StateNotifier<AuthState> {
     );
   }
 
+  void checkRequestToken() {
+    final requestToken =
+        _sharedPrefs.get(key: SharedPrefsKeys.requestToken) as String?;
+
+    if (requestToken != null) {}
+  }
+
   void setSession({Session? session}) {
     if (session != null) {
       state = state.copyWith(
@@ -70,17 +80,40 @@ class AuthController extends StateNotifier<AuthState> {
   Future<void> loginAsGuest() async {
     state = state.copyWith(session: const AsyncValue.loading());
 
-    final result = await _authService.loginAsGuest();
+    const uuid = Uuid();
+
+    await Future.delayed(const Duration(seconds: 2));
+
+    setSession(session: Session.guest(uid: uuid.v1()));
+  }
+
+  Future<void> requestToken() async {
+    state = state.copyWith(session: const AsyncValue.loading());
+
+    final result = await _authService.requestToken();
 
     result.fold(
-      (failure) {
-        state = state.copyWith(
-          session: AsyncValue.error(failure, StackTrace.current),
+      (failure) => failure.toast(),
+      (requestToken) async {
+        _sharedPrefs.set(
+            key: SharedPrefsKeys.requestToken, value: requestToken);
+        final Uri url = Uri.parse(
+          '${RemoteEnvironment.tmdbDomain}${RemoteEnvironment.auth}'
+          '/access?request_token=$requestToken',
         );
-        failure.toast();
+
+        await launchUrl(url);
+        setSession(session: Session.empty);
       },
-      (session) => setSession(session: session),
     );
+  }
+
+  /// The [success] (Right) is always true because the false case is handled
+  /// inside the repository
+  Future<void> login() async {
+    state = state.copyWith(session: const AsyncValue.loading());
+
+    final result = await _authService.requestToken();
   }
 
   /// The [success] (Right) is always true because the false case is handled
@@ -93,8 +126,8 @@ class AuthController extends StateNotifier<AuthState> {
 
     state = state.copyWith(session: const AsyncValue.loading());
 
-    final result =
-        await _authService.logout(sessionId: state.session.value!.sessionId);
+    final result = await _authService.logout(
+        accessToken: state.session.value!.accessToken);
 
     result.fold(
       (failure) => failure.toast(),

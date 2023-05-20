@@ -9,7 +9,6 @@ final dioProvider = Provider<Dio>(
       BaseOptions(
         baseUrl: RemoteEnvironment.baseUrl,
         queryParameters: {
-          'api_key': RemoteEnvironment.apiKeyV3,
           'language': 'en-US',
         },
         headers: {

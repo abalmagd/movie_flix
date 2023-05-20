@@ -14,4 +14,8 @@ class Strings {
   static const actors = 'Actors';
   static const logout = 'Logout';
   static const guestSession = 'Guest Session';
+  static const headsUp = 'Heads Up!';
+  static const confirm = 'Confirm';
+  static const redirectWarning = 'You are about to be redirected to approve '
+      'your login on themoviedb.org.';
 }

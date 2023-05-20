@@ -43,4 +43,5 @@ class SharedPrefs implements SharedPrefsKeys {
 class SharedPrefsKeys {
   static const themeMode = 'themeMode';
   static const session = 'session';
+  static const requestToken = 'requestToken';
 }

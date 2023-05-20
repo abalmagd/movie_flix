@@ -5,8 +5,6 @@ import 'package:movie_flix/app/features/landing/landing_screen.dart';
 import 'package:movie_flix/app/riverpod/auth/auth_controller.dart';
 
 import '../app/environment/strings.dart';
-import '../app/features/auth/login_screen.dart';
-import '../app/features/auth/register_screen.dart';
 import '../app/features/home/home_screen.dart';
 import '../app/models/session.dart';
 
@@ -30,18 +28,6 @@ class Routing {
           path: LandingScreen.route,
           name: LandingScreen.route,
           builder: (context, state) => const LandingScreen(),
-          routes: [
-            GoRoute(
-              path: LoginScreen.route.substring(1),
-              name: LoginScreen.route,
-              builder: (context, state) => const LoginScreen(),
-            ),
-            GoRoute(
-              path: RegisterScreen.route.substring(1),
-              name: RegisterScreen.route,
-              builder: (context, state) => const RegisterScreen(),
-            ),
-          ],
         ),
         GoRoute(
           path: HomeScreen.route,

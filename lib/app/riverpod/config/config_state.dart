@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 @immutable
 class ConfigState extends Equatable {
   const ConfigState({
-    this.themeMode = ThemeMode.system,
+    this.themeMode = ThemeMode.dark,
   });
 
   final ThemeMode themeMode;

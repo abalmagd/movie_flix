@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_flix/app/environment/strings.dart';
-import 'package:movie_flix/app/widgets/primary_drawer.dart';
+import 'package:movie_flix/app/widgets/drawer/primary_drawer.dart';
 
 import '../../environment/spacing.dart';
 import '../../widgets/primary_app_bar.dart';
@@ -17,6 +17,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: const PrimaryAppBar(title: Strings.home),
       drawer: const PrimaryDrawer(),
@@ -24,8 +25,9 @@ class HomeScreen extends StatelessWidget {
         length: tabs.length,
         child: Column(
           children: [
-            const TabBar(
-              tabs: [
+            TabBar(
+              dividerColor: theme.tabBarTheme.dividerColor,
+              tabs: const [
                 Tab(
                   icon: Icon(Icons.movie_outlined),
                   text: Strings.movies,
@@ -45,13 +47,13 @@ class HomeScreen extends StatelessWidget {
                 children: tabs
                     .map(
                       (e) => SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: Spacing.s8,
-                          horizontal: Spacing.s12,
-                        ),
-                        child: e,
-                      ),
-                    )
+                    padding: const EdgeInsets.symmetric(
+                      vertical: Spacing.s8,
+                      horizontal: Spacing.s12,
+                    ),
+                    child: e,
+                  ),
+                )
                     .toList(),
               ),
             ),
@@ -69,10 +71,11 @@ class MoviesTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        /*Latest*/
+        // Latest
         Row(
           children: [
             const Text(Strings.latest),
+            const Spacer(),
             TextButton(
               onPressed: () {},
               child: const Text(Strings.viewAll),
@@ -89,10 +92,11 @@ class MoviesTab extends StatelessWidget {
             itemCount: 5,
           ),
         ),
-        /*Trending*/
+        // Trending
         Row(
           children: [
             const Text(Strings.trending),
+            const Spacer(),
             TextButton(
               onPressed: () {},
               child: const Text(Strings.viewAll),
@@ -109,10 +113,11 @@ class MoviesTab extends StatelessWidget {
             itemCount: 5,
           ),
         ),
-        /*Upcoming*/
+        // Upcoming
         Row(
           children: [
             const Text(Strings.upcoming),
+            const Spacer(),
             TextButton(
               onPressed: () {},
               child: const Text(Strings.viewAll),
