@@ -44,13 +44,12 @@ class LandingScreen extends ConsumerWidget {
                 builder: (context) => const RedirectBottomSheet(),
               );
             },
-            isLoading: auth.session is AsyncLoading,
+            isLoading: auth.isLoading,
             text: Strings.login,
           ),
           TextButton(
-            onPressed: auth.session is AsyncLoading
-                ? null
-                : () async => await call.loginAsGuest(),
+            onPressed:
+                auth.isLoading ? null : () async => await call.loginAsGuest(),
             child: const Text(Strings.continueAsGuest),
           ),
         ],
@@ -88,7 +87,8 @@ class RedirectBottomSheet extends ConsumerWidget {
             ),
           ),
           PrimaryButton(
-            onPressed: () => ref.read(authControllerProvider.notifier).login(),
+            onPressed: () =>
+                ref.read(authControllerProvider.notifier).requestToken(),
             width: double.infinity,
             text: Strings.confirm,
           ),

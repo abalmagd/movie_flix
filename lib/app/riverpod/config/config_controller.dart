@@ -34,7 +34,7 @@ class ConfigController extends StateNotifier<ConfigState> {
     state = state.copyWith(
       themeMode: EnumToString.fromString(
         ThemeMode.values,
-        localThemeMode == null ? 'system' : localThemeMode as String,
+        localThemeMode == null ? 'dark' : localThemeMode as String,
       ),
     );
   }

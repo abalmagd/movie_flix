@@ -31,6 +31,7 @@ class MyApp extends ConsumerWidget {
     final config = ref.watch(configControllerProvider);
 
     return AppLifeCyclesWrapper(
+      ref: ref,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         builder: (context, child) => MaterialApp.router(

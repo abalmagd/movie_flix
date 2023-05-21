@@ -16,8 +16,7 @@ class Routing {
       debugLogDiagnostics: true,
       errorBuilder: (context, state) => const BadRouteScreen(),
       redirect: (context, state) {
-        if (auth.session.value != Session.empty &&
-            auth.session.value != null &&
+        if (auth.session != Session.empty &&
             state.location == LandingScreen.route) {
           return HomeScreen.route;
         }

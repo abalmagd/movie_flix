@@ -1,24 +1,31 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/app/models/session.dart';
 
 @immutable
 class AuthState extends Equatable {
   const AuthState({
     required this.session,
+    this.requestToken = '',
+    this.isLoading = false,
   });
 
-  final AsyncValue<Session> session;
+  final Session session;
+  final String requestToken;
+  final bool isLoading;
 
   AuthState copyWith({
-    AsyncValue<Session>? session,
+    Session? session,
+    String? requestToken,
+    bool? isLoading,
   }) {
     return AuthState(
       session: session ?? this.session,
+      requestToken: requestToken ?? this.requestToken,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 
   @override
-  List<Object?> get props => [session];
+  List<Object?> get props => [session, requestToken, isLoading];
 }

@@ -67,7 +67,7 @@ class PrimaryDrawer extends ConsumerWidget {
                       ),
                       const SizedBox(height: Spacing.s8),
                       Text(
-                        auth.session.value!.isGuest
+                        auth.session.isGuest
                             ? Strings.guestSession
                             : Strings.guestSession,
                         style: theme.textTheme.bodyMedium?.copyWith(
@@ -93,6 +93,7 @@ class PrimaryDrawer extends ConsumerWidget {
             DrawerButton(
               text: Strings.logout,
               icon: Icons.logout,
+              isLoading: auth.isLoading,
               onTap: () => ref.read(authControllerProvider.notifier).logout(),
             ),
           ],

@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:movie_flix/app/riverpod/auth/auth_controller.dart';
 
 class AppLifeCyclesWrapper extends ConsumerStatefulWidget {
-  const AppLifeCyclesWrapper({Key? key, required this.child}) : super(key: key);
+  const AppLifeCyclesWrapper({
+    Key? key,
+    required this.child,
+    required this.ref,
+  }) : super(key: key);
+
   final Widget child;
+  final WidgetRef ref;
 
   @override
   ConsumerState<AppLifeCyclesWrapper> createState() =>
@@ -12,19 +19,19 @@ class AppLifeCyclesWrapper extends ConsumerStatefulWidget {
 
 class _AppLifeCyclesWrapperState extends ConsumerState<AppLifeCyclesWrapper>
     with WidgetsBindingObserver {
+  late final AuthController auth;
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
+        auth.setSession();
         break;
       case AppLifecycleState.inactive:
-        print("app in inactive");
         break;
       case AppLifecycleState.paused:
-        print("app in paused");
         break;
       case AppLifecycleState.detached:
-        print("app in detached");
         break;
     }
   }
@@ -33,6 +40,7 @@ class _AppLifeCyclesWrapperState extends ConsumerState<AppLifeCyclesWrapper>
   initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    auth = widget.ref.read(authControllerProvider.notifier);
   }
 
   @override

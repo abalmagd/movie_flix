@@ -37,8 +37,7 @@ class PrimaryAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ),
         IconButton(
           onPressed: () {
-            auth.session.value!.isGuest
-                ? Utils.toast(message: 'Guest Session')
+            auth.session.isGuest ? Utils.toast(message: 'Guest Session')
                 : null;
           },
           icon: const Icon(Icons.person),

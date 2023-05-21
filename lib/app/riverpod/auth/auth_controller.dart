@@ -13,9 +13,7 @@ final authControllerProvider =
     StateNotifierProvider.autoDispose<AuthController, AuthState>(
   (ref) {
     return AuthController(
-      const AuthState(
-        session: AsyncValue.data(Session.empty),
-      ),
+      const AuthState(session: Session.empty),
       ref.watch(sharedPrefsProvider),
       ref.watch(baseAuthServiceProvider),
     );
@@ -43,66 +41,73 @@ class AuthController extends StateNotifier<AuthState> {
 
   void logData() {
     Utils.logPrint(
-      message: state.session.asData?.value.toString() ?? '',
+      message: state.session.toString(),
       name: 'Session Data',
     );
   }
 
-  void checkRequestToken() {
-    final requestToken =
-        _sharedPrefs.get(key: SharedPrefsKeys.requestToken) as String?;
-
-    if (requestToken != null) {}
-  }
-
   void setSession({Session? session}) {
     if (session != null) {
-      state = state.copyWith(
-        session: AsyncValue.data(session),
-      );
+      state = state.copyWith(session: session);
       _sharedPrefs.set(
         key: SharedPrefsKeys.session,
         value: session.toRawJson(),
       );
-      if (session == Session.empty) Utils.toast(message: 'Logout success!');
-      if (session != Session.empty) Utils.toast(message: 'Login success!');
+      state = state.copyWith(isLoading: false);
+      logData();
+      return;
+    }
+
+    final requestToken =
+        _sharedPrefs.get(key: SharedPrefsKeys.requestToken) as String?;
+
+    if (requestToken != null) {
+      state = state.copyWith(requestToken: requestToken);
+      login();
       return;
     }
 
     final sessionString = _sharedPrefs.get(key: SharedPrefsKeys.session);
     if (sessionString != null) {
       state = state.copyWith(
-        session: AsyncValue.data(Session.fromRawJson(sessionString as String)),
+        session: Session.fromRawJson(sessionString as String),
+        isLoading: false,
       );
     }
   }
 
   Future<void> loginAsGuest() async {
-    state = state.copyWith(session: const AsyncValue.loading());
+    state = state.copyWith(isLoading: true);
 
     const uuid = Uuid();
 
-    await Future.delayed(const Duration(seconds: 2));
-
     setSession(session: Session.guest(uid: uuid.v1()));
+    Utils.toast(message: 'Login Success!');
   }
 
   Future<void> requestToken() async {
-    state = state.copyWith(session: const AsyncValue.loading());
+    state = state.copyWith(isLoading: true);
 
-    final result = await _authService.requestToken();
+    final result = await _authService.getRequestToken();
 
     result.fold(
-      (failure) => failure.toast(),
+      (failure) {
+        failure.toast();
+        state = state.copyWith(isLoading: false);
+      },
       (requestToken) async {
         _sharedPrefs.set(
-            key: SharedPrefsKeys.requestToken, value: requestToken);
+          key: SharedPrefsKeys.requestToken,
+          value: requestToken,
+        );
+
         final Uri url = Uri.parse(
           '${RemoteEnvironment.tmdbDomain}${RemoteEnvironment.auth}'
           '/access?request_token=$requestToken',
         );
+        await launchUrl(url, mode: LaunchMode.externalApplication);
 
-        await launchUrl(url);
+        state = state.copyWith(requestToken: requestToken);
         setSession(session: Session.empty);
       },
     );
@@ -111,27 +116,47 @@ class AuthController extends StateNotifier<AuthState> {
   /// The [success] (Right) is always true because the false case is handled
   /// inside the repository
   Future<void> login() async {
-    state = state.copyWith(session: const AsyncValue.loading());
+    state = state.copyWith(isLoading: true);
 
-    final result = await _authService.requestToken();
+    final result = await _authService.login(requestToken: state.requestToken);
+
+    result.fold(
+      (failure) {
+        setSession(session: Session.empty);
+        failure.toast();
+      },
+      (session) {
+        setSession(session: session);
+        _sharedPrefs.remove(key: SharedPrefsKeys.requestToken);
+        Utils.toast(message: 'Login Success!');
+      },
+    );
   }
 
   /// The [success] (Right) is always true because the false case is handled
   /// inside the repository
   void logout() async {
-    if (state.session.value!.isGuest) {
+    state = state.copyWith(isLoading: true);
+
+    Future.delayed(const Duration(seconds: 5));
+
+    if (state.session.isGuest) {
       setSession(session: Session.empty);
       return;
     }
 
-    state = state.copyWith(session: const AsyncValue.loading());
-
-    final result = await _authService.logout(
-        accessToken: state.session.value!.accessToken);
+    final result =
+        await _authService.logout(accessToken: state.session.accessToken);
 
     result.fold(
-      (failure) => failure.toast(),
-      (success) => setSession(session: Session.empty),
+      (failure) {
+        failure.toast();
+        state = state.copyWith(isLoading: false);
+      },
+      (success) {
+        setSession(session: Session.empty);
+        Utils.toast(message: 'Logout Success!');
+      },
     );
   }
 }

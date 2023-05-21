@@ -9,11 +9,13 @@ class DrawerButton extends StatelessWidget {
     required this.icon,
     required this.onTap,
     this.color,
+    this.isLoading = false,
   }) : super(key: key);
 
   final String text;
   final IconData icon;
   final VoidCallback onTap;
+  final bool isLoading;
   final Color? color;
 
   @override
@@ -22,9 +24,17 @@ class DrawerButton extends StatelessWidget {
     return ListTile(
       title: Text(text),
       leading: Icon(icon, color: color),
-      trailing: Icon(Icons.arrow_forward_ios, size: Spacing.s16, color: color),
+      trailing: isLoading
+          ? SizedBox(
+              width: Spacing.s18,
+              height: Spacing.s18,
+              child: CircularProgressIndicator(
+                color: theme.colorScheme.primary,
+              ),
+            )
+          : Icon(Icons.arrow_forward_ios, size: Spacing.s16, color: color),
       splashColor: theme.colorScheme.primary,
-      onTap: onTap,
+      onTap: () => onTap(),
     );
   }
 }
