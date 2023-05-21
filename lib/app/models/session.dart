@@ -59,3 +59,9 @@ class Session extends Equatable {
   @override
   List<Object?> get props => [accessToken, accountId, isGuest, expiresAt];
 }
+
+class Profile extends Equatable {
+  @override
+  // TODO: implement props
+  List<Object?> get props => throw UnimplementedError();
+}

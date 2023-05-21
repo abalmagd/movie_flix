@@ -1,8 +1,5 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:movie_flix/app/environment/assets.dart';
 import 'package:movie_flix/app/environment/constants.dart';
 import 'package:movie_flix/app/environment/strings.dart';
@@ -11,7 +8,6 @@ import 'package:movie_flix/app/riverpod/config/config_controller.dart';
 import 'package:movie_flix/app/widgets/drawer/drawer_button.dart';
 
 import '../../environment/spacing.dart';
-import '../../features/home/home_screen.dart';
 import '../../theme/palette.dart';
 
 class PrimaryDrawer extends ConsumerWidget {
@@ -23,6 +19,7 @@ class PrimaryDrawer extends ConsumerWidget {
     final size = MediaQuery.of(context).size;
     final auth = ref.watch(authControllerProvider);
     final config = ref.watch(configControllerProvider);
+    final currentRoute = ModalRoute.of(context)?.settings.name;
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -35,66 +32,49 @@ class PrimaryDrawer extends ConsumerWidget {
       child: Drawer(
         child: Column(
           children: [
+            // Header Image
             SizedBox(
               height: size.height * Constants.drawerHeaderHeightFactor,
               width: double.infinity,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Image.network(
-                    config.themeMode == ThemeMode.dark
-                        ? Assets.tempImageRed
-                        : Assets.tempImageBlue,
-                    fit: BoxFit.cover,
-                    height: double.infinity,
-                  ),
-                  ClipRRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(
-                        sigmaX: Spacing.s10,
-                        sigmaY: Spacing.s10,
-                      ),
-                      child: Container(color: Palette.transparent),
-                    ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const CircleAvatar(
-                        radius: Spacing.s30,
-                        backgroundColor: Palette.neutral,
-                        child: Icon(Icons.person),
-                      ),
-                      const SizedBox(height: Spacing.s8),
-                      Text(
-                        auth.session.isGuest
-                            ? Strings.guestSession
-                            : Strings.guestSession,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: Palette.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+              child: Image.network(
+                config.themeMode == ThemeMode.dark
+                    ? Assets.tempImageRed
+                    : Assets.tempImageBlue,
+                fit: BoxFit.cover,
+                height: double.infinity,
               ),
             ),
-            Divider(color: theme.colorScheme.primary, height: Spacing.s0),
+            // Header
+            ListTile(
+              title: Text(
+                auth.session.isGuest
+                    ? Strings.guestSession
+                    : Strings.userSession,
+                style: theme.textTheme.bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              leading: const CircleAvatar(
+                backgroundColor: Palette.neutral,
+                child: Icon(Icons.person),
+              ),
+              trailing: const Icon(Icons.arrow_forward_ios, size: Spacing.s16),
+              splashColor: theme.colorScheme.primary,
+              onTap: () {},
+            ),
+            // Home
             DrawerButton(
               text: Strings.home,
               icon: Icons.home,
-              color: GoRouter.of(context).location == HomeScreen.route
-                  ? theme.colorScheme.primary
-                  : null,
-              onTap: () {},
+              route: '/',
+              onTap: () => currentRoute == '/' ? Navigator.pop(context) : null,
             ),
             const Spacer(),
+            // Logout
             DrawerButton(
               text: Strings.logout,
               icon: Icons.logout,
               isLoading: auth.isLoading,
-              onTap: () => ref.read(authControllerProvider.notifier).logout(),
+              onTap: ref.read(authControllerProvider.notifier).logout,
             ),
           ],
         ),

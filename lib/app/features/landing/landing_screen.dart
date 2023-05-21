@@ -21,6 +21,7 @@ class LandingScreen extends ConsumerWidget {
     final brightness = Theme.of(context).brightness;
     final auth = ref.watch(authControllerProvider);
     final call = ref.read(authControllerProvider.notifier);
+
     return Scaffold(
       appBar: const PrimaryAppBar(title: Strings.appName),
       body: Column(
@@ -38,18 +39,15 @@ class LandingScreen extends ConsumerWidget {
             ),
           ),
           PrimaryButton(
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (context) => const RedirectBottomSheet(),
-              );
-            },
+            onPressed: () => showModalBottomSheet(
+              context: context,
+              builder: (context) => const RedirectBottomSheet(),
+            ),
             isLoading: auth.isLoading,
             text: Strings.login,
           ),
           TextButton(
-            onPressed:
-                auth.isLoading ? null : () async => await call.loginAsGuest(),
+            onPressed: auth.isLoading ? null : call.loginAsGuest,
             child: const Text(Strings.continueAsGuest),
           ),
         ],
@@ -65,6 +63,7 @@ class RedirectBottomSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final size = MediaQuery.of(context).size;
+    final auth = ref.watch(authControllerProvider);
     return Container(
       height: size.height * Constants.redirectBottomSheetHeightFactor,
       padding: const EdgeInsets.all(Spacing.s16),
@@ -87,8 +86,11 @@ class RedirectBottomSheet extends ConsumerWidget {
             ),
           ),
           PrimaryButton(
-            onPressed: () =>
-                ref.read(authControllerProvider.notifier).requestToken(),
+            onPressed: () {
+              ref.read(authControllerProvider.notifier).requestToken();
+              Navigator.pop(context);
+            },
+            isLoading: auth.isLoading,
             width: double.infinity,
             text: Strings.confirm,
           ),

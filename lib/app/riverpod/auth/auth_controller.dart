@@ -102,8 +102,8 @@ class AuthController extends StateNotifier<AuthState> {
         );
 
         final Uri url = Uri.parse(
-          '${RemoteEnvironment.tmdbDomain}${RemoteEnvironment.auth}'
-          '/access?request_token=$requestToken',
+          '${RemoteEnvironment.tmdbDomain}'
+          'auth/access?request_token=$requestToken',
         );
         await launchUrl(url, mode: LaunchMode.externalApplication);
 

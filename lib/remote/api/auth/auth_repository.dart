@@ -30,7 +30,6 @@ class AuthRepository implements BaseAuthRepository {
   Future<Map<String, dynamic>> getRequestToken() async {
     try {
       final response = await _dio.post(RemoteEnvironment.requestToken);
-
       final Map<String, dynamic> json = response.data;
 
       return json;
@@ -60,7 +59,7 @@ class AuthRepository implements BaseAuthRepository {
     try {
       final response = await _dio.delete(
         RemoteEnvironment.accessToken,
-        data: {"access_token": accessToken},
+        data: {'access_token': accessToken},
       );
 
       final Map<String, dynamic> json = response.data;

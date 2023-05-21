@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../app/theme/palette.dart';
@@ -13,8 +12,13 @@ class Utils {
     Object? error,
     StackTrace? stackTrace,
   }) {
-    if (kDebugMode) {
-      log(message, name: name, error: error, stackTrace: stackTrace);
+    if (true /*kDebugMode*/) {
+      log(
+        message,
+        name: 'Logger => $name',
+        error: error,
+        stackTrace: stackTrace,
+      );
     }
   }
 
