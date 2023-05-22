@@ -47,15 +47,20 @@ class PrimaryDrawer extends ConsumerWidget {
             // Header
             ListTile(
               title: Text(
-                auth.session.isGuest
-                    ? Strings.guestSession
-                    : Strings.userSession,
+                auth.session.profile.name.isEmpty
+                    ? 'Username'
+                    : auth.session.profile.name,
                 style: theme.textTheme.bodyMedium
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
-              leading: const CircleAvatar(
+              subtitle: Text(
+                auth.session.profile.username,
+                style: theme.textTheme.bodySmall,
+              ),
+              leading: CircleAvatar(
                 backgroundColor: Palette.neutral,
-                child: Icon(Icons.person),
+                foregroundImage: NetworkImage(auth.session.profile.avatar),
+                child: const Icon(Icons.person),
               ),
               trailing: const Icon(Icons.arrow_forward_ios, size: Spacing.s16),
               splashColor: theme.colorScheme.primary,

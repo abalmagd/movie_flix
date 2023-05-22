@@ -14,6 +14,10 @@ abstract class BaseAuthRepository {
 
   Future<Map<String, dynamic>> login({required String requestToken});
 
+  Future<Map<String, dynamic>> getSessionId({required String accessToken});
+
+  Future<Map<String, dynamic>> getAccountDetails({required String sessionId});
+
   Future<Map<String, dynamic>> logout({required String accessToken});
 }
 
@@ -30,8 +34,8 @@ class AuthRepository implements BaseAuthRepository {
   Future<Map<String, dynamic>> getRequestToken() async {
     try {
       final response = await _dio.post(RemoteEnvironment.requestToken);
-      final Map<String, dynamic> json = response.data;
 
+      final Map<String, dynamic> json = response.data;
       return json;
     } on DioError catch (e) {
       throw Failure.handleExceptions(e);
@@ -47,7 +51,38 @@ class AuthRepository implements BaseAuthRepository {
       );
 
       final Map<String, dynamic> json = response.data;
+      return json;
+    } on DioError catch (e) {
+      throw Failure.handleExceptions(e);
+    }
+  }
 
+  @override
+  Future<Map<String, dynamic>> getSessionId(
+      {required String accessToken}) async {
+    try {
+      final response = await _dio.post(
+        RemoteEnvironment.createSession,
+        data: {'access_token': accessToken},
+      );
+
+      final Map<String, dynamic> json = response.data;
+      return json;
+    } on DioError catch (e) {
+      throw Failure.handleExceptions(e);
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> getAccountDetails(
+      {required String sessionId}) async {
+    try {
+      final response = await _dio.get(
+        RemoteEnvironment.account,
+        queryParameters: {'session_id': sessionId},
+      );
+
+      final Map<String, dynamic> json = response.data;
       return json;
     } on DioError catch (e) {
       throw Failure.handleExceptions(e);
@@ -63,7 +98,6 @@ class AuthRepository implements BaseAuthRepository {
       );
 
       final Map<String, dynamic> json = response.data;
-
       return json;
     } on DioError catch (e) {
       throw Failure.handleExceptions(e);

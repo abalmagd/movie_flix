@@ -14,7 +14,7 @@ class Failure implements Exception {
     this.exception,
   });
 
-  static Failure handleExceptions(e) {
+  static Failure handleExceptions(DioError e) {
     try {
       throw e;
     } on DioError catch (e) {

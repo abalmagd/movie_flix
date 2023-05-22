@@ -15,7 +15,7 @@ class Utils {
     if (true /*kDebugMode*/) {
       log(
         message,
-        name: 'Logger => $name',
+        name: name,
         error: error,
         stackTrace: stackTrace,
       );

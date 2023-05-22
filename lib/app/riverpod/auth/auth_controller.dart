@@ -6,7 +6,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../core/local_storage.dart';
 import '../../../core/utils.dart';
-import '../../models/session.dart';
+import '../../models/auth/session.dart';
 import 'auth_state.dart';
 
 final authControllerProvider =
@@ -26,6 +26,7 @@ class AuthController extends StateNotifier<AuthState> {
     this._sharedPrefs,
     this._authService,
   ) : super(state) {
+    _sharedPrefs.clear();
     setSession();
     logData();
   }

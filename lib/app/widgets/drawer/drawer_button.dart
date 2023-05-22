@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../environment/spacing.dart';
+import '../../theme/palette.dart';
 
 class DrawerButton extends StatelessWidget {
   const DrawerButton({
@@ -28,9 +29,12 @@ class DrawerButton extends StatelessWidget {
     final currentRoute = ModalRoute.of(context)?.settings.name;
     return ListTile(
       title: Text(text),
-      leading: Icon(
-        icon,
-        color: currentRoute == route ? theme.colorScheme.primary : null,
+      leading: CircleAvatar(
+        backgroundColor: Palette.transparent,
+        child: Icon(
+          icon,
+          color: currentRoute == route ? theme.colorScheme.primary : null,
+        ),
       ),
       trailing: isLoading
           ? SizedBox(

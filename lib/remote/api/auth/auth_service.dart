@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/core/failure.dart';
 import 'package:movie_flix/remote/api/auth/auth_repository.dart';
 
-import '../../../app/models/session.dart';
-import '../../../core/utils.dart';
+import '../../../app/models/auth/session.dart';
 
 /// Responsible for modifying the data received from the repository
 /// and checking for request errors (Ex: bad token).
@@ -37,11 +36,6 @@ class AuthService implements BaseAuthService {
 
       final bool success = json['success'];
 
-      Utils.logPrint(
-        message: success.toString(),
-        name: 'Request Token',
-      );
-
       if (!success) {
         throw Failure(
           message: json['status_message'],
@@ -60,24 +54,38 @@ class AuthService implements BaseAuthService {
   @override
   Future<Either<Failure, Session>> login({required String requestToken}) async {
     try {
-      final json = await _baseAuthRepository.login(requestToken: requestToken);
+      final Map<String, dynamic> json = {};
 
-      final bool success = json['success'];
-
-      Utils.logPrint(
-        message: success.toString(),
-        name: 'Request Token',
+      final tokenJson = await _baseAuthRepository.login(
+        requestToken: requestToken,
       );
+
+      json.addEntries(tokenJson.entries);
+
+      final sessionJson = await _baseAuthRepository.getSessionId(
+        accessToken: tokenJson['access_token'],
+      );
+
+      json.addEntries(sessionJson.entries);
+
+      final profileJson = await _baseAuthRepository.getAccountDetails(
+        sessionId: sessionJson['session_id'],
+      );
+
+      json.addAll({'profile': profileJson});
+
+      final success = tokenJson['success'] &&
+          sessionJson['success'] &&
+          (profileJson['success'] ?? true);
 
       if (!success) {
         throw Failure(
-          message: json['status_message'],
-          code: json['status_code'],
+          message: tokenJson['status_message'],
+          code: tokenJson['status_code'],
         );
       }
 
       final session = Session.fromJson(json);
-
       return Right(session);
     } on Failure catch (failure) {
       return Left(failure);
@@ -90,11 +98,6 @@ class AuthService implements BaseAuthService {
       final json = await _baseAuthRepository.logout(accessToken: accessToken);
 
       final bool success = json['success'];
-
-      Utils.logPrint(
-        message: success.toString(),
-        name: 'Logout',
-      );
 
       if (!success) {
         throw Failure(

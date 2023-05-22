@@ -7,7 +7,7 @@ import 'package:movie_flix/app/theme/custom_theme.dart';
 import 'package:movie_flix/core/life_cycle_wrapper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'app/models/session.dart';
+import 'app/models/auth/session.dart';
 import 'app/riverpod/config/config_controller.dart';
 import 'core/local_storage.dart';
 import 'core/routes.dart';

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:movie_flix/app/models/session.dart';
+import 'package:movie_flix/app/models/auth/session.dart';
 
 @immutable
 class AuthState extends Equatable {
