@@ -17,6 +17,7 @@ class Strings {
   static const userSession = 'User Session';
   static const headsUp = 'Heads Up!';
   static const confirm = 'Confirm';
+  static const loginSuccess = 'Login Success';
   static const redirectWarning = 'You are about to be redirected to approve '
       'your login on themoviedb.org.';
 }

@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../core/local_storage.dart';
 import '../../../core/utils.dart';
+import '../../environment/strings.dart';
 import '../../models/auth/session.dart';
 import 'auth_state.dart';
 
@@ -26,7 +27,7 @@ class AuthController extends StateNotifier<AuthState> {
     this._sharedPrefs,
     this._authService,
   ) : super(state) {
-    _sharedPrefs.clear();
+    // _sharedPrefs.clear();
     setSession();
     logData();
   }
@@ -68,22 +69,23 @@ class AuthController extends StateNotifier<AuthState> {
       return;
     }
 
-    final sessionString = _sharedPrefs.get(key: SharedPrefsKeys.session);
-    if (sessionString != null) {
+    final sessionString =
+        _sharedPrefs.get(key: SharedPrefsKeys.session) as String;
+    if (sessionString.isNotEmpty) {
       state = state.copyWith(
-        session: Session.fromRawJson(sessionString as String),
+        session: Session.fromRawJson(sessionString),
         isLoading: false,
       );
     }
   }
 
-  Future<void> loginAsGuest() async {
+  void loginAsGuest() {
     state = state.copyWith(isLoading: true);
 
     const uuid = Uuid();
 
     setSession(session: Session.guest(uid: uuid.v1()));
-    Utils.toast(message: 'Login Success!');
+    Utils.toast(message: Strings.loginSuccess);
   }
 
   Future<void> requestToken() async {

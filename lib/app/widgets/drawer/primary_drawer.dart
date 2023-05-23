@@ -59,7 +59,8 @@ class PrimaryDrawer extends ConsumerWidget {
               ),
               leading: CircleAvatar(
                 backgroundColor: Palette.neutral,
-                foregroundImage: NetworkImage(auth.session.profile.avatar),
+                foregroundImage:
+                    NetworkImage(auth.session.profile.avatar.gravatar),
                 child: const Icon(Icons.person),
               ),
               trailing: const Icon(Icons.arrow_forward_ios, size: Spacing.s16),

@@ -40,22 +40,22 @@ class Session extends Equatable {
 
   factory Session.fromRawJson(String str) => Session.fromJson(json.decode(str));
 
-  String toRawJson() => json.encode(toJson());
+  String toRawJson() => json.encode(_toJson());
 
   factory Session.fromJson(Map<String, dynamic> json) => Session(
-        accessToken: json['access_token'] ?? '',
+    accessToken: json['access_token'] ?? '',
         accountId: json['account_id'] ?? '',
         sessionId: json['session_id'] ?? '',
-        profile: Profile.fromJson(json['profile'] ?? Profile.unknown.toJson()),
+        profile: Profile.fromJson(json['profile'] ?? Profile.unknown),
         expiresAt: json['expires_at'] ?? '',
         isGuest: json['is_guest'] ?? false,
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> _toJson() => {
         'access_token': accessToken,
         'account_id': accountId,
         'session_id': sessionId,
-        'profile': profile,
+        'profile': profile.toJson(),
         'expires_at': expiresAt,
         'is_guest': isGuest,
       };
