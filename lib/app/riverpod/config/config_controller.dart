@@ -3,39 +3,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/local_storage.dart';
+import '../../../core/utils.dart';
 import 'config_state.dart';
 
 final configControllerProvider =
-    StateNotifierProvider.autoDispose<ConfigController, ConfigState>(
-  (ref) {
-    return ConfigController(
-      const ConfigState(),
-      ref.watch(sharedPrefsProvider),
-    );
-  },
-);
+    NotifierProvider<ConfigController, ConfigState>(ConfigController.new);
 
-class ConfigController extends StateNotifier<ConfigState> {
-  ConfigController(ConfigState state, this._sharedPrefs) : super(state) {
-    getThemeMode();
-  }
-
-  final SharedPrefs _sharedPrefs;
+class ConfigController extends Notifier<ConfigState> {
+  late final SharedPrefs _sharedPrefs;
 
   @override
-  void dispose() {
-    /*Comment to hide warning*/
-    super.dispose();
+  ConfigState build() {
+    _sharedPrefs = ref.read(sharedPrefsProvider);
+
+    final ThemeMode themeMode = getThemeMode() ?? ThemeMode.dark;
+
+    return ConfigState(themeMode: themeMode);
   }
 
-  void getThemeMode() {
+  ThemeMode? getThemeMode() {
     final localThemeMode = _sharedPrefs.get(key: SharedPrefsKeys.themeMode);
 
-    state = state.copyWith(
-      themeMode: EnumToString.fromString(
-        ThemeMode.values,
-        localThemeMode == null ? 'dark' : localThemeMode as String,
-      ),
+    return EnumToString.fromString(
+      ThemeMode.values,
+      localThemeMode == null ? 'dark' : localThemeMode as String,
     );
   }
 
@@ -58,5 +49,7 @@ class ConfigController extends StateNotifier<ConfigState> {
       key: SharedPrefsKeys.themeMode,
       value: EnumToString.convertToString(state.themeMode),
     );
+
+    Utils.logPrint(message: 'Theme Mode changed to ${state.themeMode}');
   }
 }

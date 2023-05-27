@@ -72,7 +72,7 @@ class Failure implements Exception {
   }
 
   void toast() => Utils.toast(
-    message: message,
+        message: message,
         severity: ToastSeverity.danger,
       );
 

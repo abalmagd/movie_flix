@@ -3,11 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/app/environment/assets.dart';
 import 'package:movie_flix/app/environment/constants.dart';
 import 'package:movie_flix/app/environment/strings.dart';
-import 'package:movie_flix/app/riverpod/auth/auth_controller.dart';
 import 'package:movie_flix/app/riverpod/config/config_controller.dart';
 import 'package:movie_flix/app/widgets/drawer/drawer_button.dart';
+import 'package:movie_flix/remote/environment_variables.dart';
 
 import '../../environment/spacing.dart';
+import '../../riverpod/auth/auth_controller.dart';
 import '../../theme/palette.dart';
 
 class PrimaryDrawer extends ConsumerWidget {
@@ -18,6 +19,7 @@ class PrimaryDrawer extends ConsumerWidget {
     final theme = Theme.of(context);
     final size = MediaQuery.of(context).size;
     final auth = ref.watch(authControllerProvider);
+    final profile = auth.value!.session.profile;
     final config = ref.watch(configControllerProvider);
     final currentRoute = ModalRoute.of(context)?.settings.name;
     return Container(
@@ -40,6 +42,7 @@ class PrimaryDrawer extends ConsumerWidget {
                 config.themeMode == ThemeMode.dark
                     ? Assets.tempImageRed
                     : Assets.tempImageBlue,
+                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
                 fit: BoxFit.cover,
                 height: double.infinity,
               ),
@@ -47,20 +50,20 @@ class PrimaryDrawer extends ConsumerWidget {
             // Header
             ListTile(
               title: Text(
-                auth.session.profile.name.isEmpty
-                    ? 'Username'
-                    : auth.session.profile.name,
+                profile.name.isEmpty ? 'Username' : profile.name,
                 style: theme.textTheme.bodyMedium
                     ?.copyWith(fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
               ),
               subtitle: Text(
-                auth.session.profile.username,
+                profile.username,
                 style: theme.textTheme.bodySmall,
+                overflow: TextOverflow.ellipsis,
               ),
               leading: CircleAvatar(
                 backgroundColor: Palette.neutral,
-                foregroundImage:
-                    NetworkImage(auth.session.profile.avatar.gravatar),
+                foregroundImage: NetworkImage(
+                    '${RemoteEnvironment.gravatar}${profile.avatar.gravatar}'),
                 child: const Icon(Icons.person),
               ),
               trailing: const Icon(Icons.arrow_forward_ios, size: Spacing.s16),
@@ -79,7 +82,7 @@ class PrimaryDrawer extends ConsumerWidget {
             DrawerButton(
               text: Strings.logout,
               icon: Icons.logout,
-              isLoading: auth.isLoading,
+              isLoading: auth is AsyncLoading,
               onTap: ref.read(authControllerProvider.notifier).logout,
             ),
           ],

@@ -4,16 +4,12 @@ import 'package:equatable/equatable.dart';
 import 'package:movie_flix/app/models/auth/profile.dart';
 
 class Session extends Equatable {
-  final String accessToken;
-  final String accountId;
   final String sessionId;
   final Profile profile;
   final String expiresAt;
   final bool isGuest;
 
   const Session({
-    required this.accessToken,
-    required this.accountId,
     required this.sessionId,
     required this.profile,
     required this.expiresAt,
@@ -21,39 +17,26 @@ class Session extends Equatable {
   });
 
   static const Session empty = Session(
-    accessToken: '',
-    accountId: '',
     sessionId: '',
     profile: Profile.empty,
     expiresAt: '',
     isGuest: false,
   );
 
-  static Session guest({required String uid}) => Session(
-        accessToken: '',
-        accountId: '',
-        sessionId: uid,
-        profile: Profile.guest,
-        expiresAt: DateTime.now().add(const Duration(days: 1)).toString(),
-        isGuest: true,
-      );
-
   factory Session.fromRawJson(String str) => Session.fromJson(json.decode(str));
 
-  String toRawJson() => json.encode(_toJson());
+  String toRawJson() => json.encode(toJson());
 
   factory Session.fromJson(Map<String, dynamic> json) => Session(
-    accessToken: json['access_token'] ?? '',
-        accountId: json['account_id'] ?? '',
-        sessionId: json['session_id'] ?? '',
-        profile: Profile.fromJson(json['profile'] ?? Profile.unknown),
+    sessionId: json['session_id'] ?? '',
+        profile: json['profile'] != null
+            ? Profile.fromJson(json['profile'])
+            : (json['is_guest'] ? Profile.guest : Profile.unknown),
         expiresAt: json['expires_at'] ?? '',
         isGuest: json['is_guest'] ?? false,
       );
 
-  Map<String, dynamic> _toJson() => {
-        'access_token': accessToken,
-        'account_id': accountId,
+  Map<String, dynamic> toJson() => {
         'session_id': sessionId,
         'profile': profile.toJson(),
         'expires_at': expiresAt,
@@ -62,8 +45,6 @@ class Session extends Equatable {
 
   @override
   String toString() => 'Session('
-      'access_token: $accessToken, '
-      'accountId: $accountId, '
       'sessionId: $sessionId, '
       'profile: ${profile.toString()}, '
       'isGuest: $isGuest, '
@@ -72,8 +53,6 @@ class Session extends Equatable {
 
   @override
   List<Object?> get props => [
-        accessToken,
-        accountId,
         sessionId,
         profile,
         isGuest,

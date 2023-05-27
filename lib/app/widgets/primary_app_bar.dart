@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/app/widgets/theme_icon_button.dart';
 
-import '../../core/utils.dart';
 import '../riverpod/auth/auth_controller.dart';
 import '../riverpod/config/config_controller.dart';
 
@@ -37,8 +36,8 @@ class PrimaryAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ),
         IconButton(
           onPressed: () {
-            auth.session.isGuest ? Utils.toast(message: 'Guest Session')
-                : null;
+            /*auth.session.value.isGuest ? Utils.toast(message: 'Guest Session')
+                : null;*/
           },
           icon: const Icon(Icons.person),
         ),

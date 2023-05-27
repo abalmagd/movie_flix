@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/app/riverpod/auth/auth_controller.dart';
 
-class AppLifeCyclesWrapper extends ConsumerStatefulWidget {
-  const AppLifeCyclesWrapper({
+import '../app/riverpod/auth/auth_state.dart';
+
+class AppLifeCycleWrapper extends ConsumerStatefulWidget {
+  const AppLifeCycleWrapper({
     Key? key,
     required this.child,
     required this.ref,
@@ -13,34 +15,21 @@ class AppLifeCyclesWrapper extends ConsumerStatefulWidget {
   final WidgetRef ref;
 
   @override
-  ConsumerState<AppLifeCyclesWrapper> createState() =>
-      _AppLifeCyclesWrapperState();
+  ConsumerState<AppLifeCycleWrapper> createState() =>
+      _AppLifeCycleWrapperState();
 }
 
-class _AppLifeCyclesWrapperState extends ConsumerState<AppLifeCyclesWrapper>
+class _AppLifeCycleWrapperState extends ConsumerState<AppLifeCycleWrapper>
     with WidgetsBindingObserver {
-  late final AuthController auth;
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        auth.setSession();
-        break;
-      case AppLifecycleState.inactive:
-        break;
-      case AppLifecycleState.paused:
-        break;
-      case AppLifecycleState.detached:
-        break;
-    }
-  }
+  late final AuthController authCall;
+  late final AsyncValue<AuthState> authWatch;
 
   @override
   initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    auth = widget.ref.read(authControllerProvider.notifier);
+    authCall = widget.ref.read(authControllerProvider.notifier);
+    final authWatch = widget.ref.watch(authControllerProvider);
   }
 
   @override
@@ -52,5 +41,20 @@ class _AppLifeCyclesWrapperState extends ConsumerState<AppLifeCyclesWrapper>
   @override
   Widget build(BuildContext context) {
     return widget.child;
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        authCall.setSession();
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.detached:
+        break;
+    }
   }
 }

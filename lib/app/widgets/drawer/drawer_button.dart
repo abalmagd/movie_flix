@@ -33,9 +33,12 @@ class DrawerButton extends StatelessWidget {
         backgroundColor: Palette.transparent,
         child: Icon(
           icon,
-          color: currentRoute == route ? theme.colorScheme.primary : null,
+          color: currentRoute == route
+              ? theme.colorScheme.primary
+              : theme.iconTheme.color,
         ),
       ),
+      visualDensity: VisualDensity.compact,
       trailing: isLoading
           ? SizedBox(
               width: Spacing.s18,

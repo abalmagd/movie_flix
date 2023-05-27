@@ -1,24 +1,22 @@
-import 'dart:developer';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:logger/logger.dart';
 
 import '../app/theme/palette.dart';
 
 class Utils {
   static void logPrint({
     required String message,
-    required String name,
+    Level level = Level.info,
     Object? error,
     StackTrace? stackTrace,
   }) {
-    if (true /*kDebugMode*/) {
-      log(
-        message,
-        name: name,
-        error: error,
-        stackTrace: stackTrace,
-      );
+    if (kDebugMode) {
+      final logger = Logger();
+      logger.log(level, message, error, stackTrace);
     }
   }
 

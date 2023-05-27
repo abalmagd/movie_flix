@@ -10,15 +10,15 @@ import '../../dio.dart';
 ///
 /// Data is returned as received without any modification.
 abstract class BaseAuthRepository {
-  Future<Map<String, dynamic>> getRequestToken();
+  Future<Map<String, dynamic>> loginAsGuest();
 
-  Future<Map<String, dynamic>> login({required String requestToken});
+  Future<Map<String, dynamic>> logout(String sessionId);
 
-  Future<Map<String, dynamic>> getSessionId({required String accessToken});
+  Future<Map<String, dynamic>> createRequestToken();
 
-  Future<Map<String, dynamic>> getAccountDetails({required String sessionId});
+  Future<Map<String, dynamic>> login(String requestToken);
 
-  Future<Map<String, dynamic>> logout({required String accessToken});
+  Future<Map<String, dynamic>> getProfile(String sessionId);
 }
 
 final baseAuthRepositoryProvider = Provider<BaseAuthRepository>((ref) {
@@ -31,9 +31,9 @@ class AuthRepository implements BaseAuthRepository {
   final Dio _dio;
 
   @override
-  Future<Map<String, dynamic>> getRequestToken() async {
+  Future<Map<String, dynamic>> loginAsGuest() async {
     try {
-      final response = await _dio.post(RemoteEnvironment.requestToken);
+      final response = await _dio.post(RemoteEnvironment.newGuestSession);
 
       final Map<String, dynamic> json = response.data;
       return json;
@@ -43,14 +43,28 @@ class AuthRepository implements BaseAuthRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> login({required String requestToken}) async {
+  Future<Map<String, dynamic>> createRequestToken() async {
+    try {
+      final response = await _dio.get(RemoteEnvironment.createRequestToken);
+
+      final Map<String, dynamic> json = response.data;
+
+      return json;
+    } on DioError catch (e) {
+      throw Failure.handleExceptions(e);
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> login(String requestToken) async {
     try {
       final response = await _dio.post(
-        RemoteEnvironment.accessToken,
+        RemoteEnvironment.newSession,
         data: {'request_token': requestToken},
       );
 
       final Map<String, dynamic> json = response.data;
+
       return json;
     } on DioError catch (e) {
       throw Failure.handleExceptions(e);
@@ -58,24 +72,7 @@ class AuthRepository implements BaseAuthRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> getSessionId(
-      {required String accessToken}) async {
-    try {
-      final response = await _dio.post(
-        RemoteEnvironment.createSession,
-        data: {'access_token': accessToken},
-      );
-
-      final Map<String, dynamic> json = response.data;
-      return json;
-    } on DioError catch (e) {
-      throw Failure.handleExceptions(e);
-    }
-  }
-
-  @override
-  Future<Map<String, dynamic>> getAccountDetails(
-      {required String sessionId}) async {
+  Future<Map<String, dynamic>> getProfile(String sessionId) async {
     try {
       final response = await _dio.get(
         RemoteEnvironment.account,
@@ -90,11 +87,11 @@ class AuthRepository implements BaseAuthRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> logout({required String accessToken}) async {
+  Future<Map<String, dynamic>> logout(String sessionId) async {
     try {
-      final response = await _dio.delete(
-        RemoteEnvironment.accessToken,
-        data: {'access_token': accessToken},
+      final response = await _dio.post(
+        RemoteEnvironment.session,
+        data: {'session_id': sessionId},
       );
 
       final Map<String, dynamic> json = response.data;

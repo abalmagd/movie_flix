@@ -1,8 +1,7 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
-
-import '../../../remote/environment_variables.dart';
+import 'package:username_gen/username_gen.dart';
 
 /// Gravatar https://www.gravatar.com/avatar/c9e9fc152ee756a900db85757c29815d
 class Profile extends Equatable {
@@ -34,14 +33,14 @@ class Profile extends Equatable {
     username: '',
   );
 
-  static const Profile guest = Profile(
+  static Profile guest = Profile(
     avatar: Avatar.empty,
     id: 0,
     iso6391: '',
     iso31661: '',
-    name: 'Guest',
+    name: 'Guest Session',
     includeAdult: false,
-    username: 'Limited Features',
+    username: UsernameGen().generate(),
   );
 
   static const Profile unknown = Profile(
@@ -87,8 +86,7 @@ class Profile extends Equatable {
         username: json['username'],
       );
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         'avatar': avatar.toJson(),
         'id': id,
         'iso_639_1': iso6391,
@@ -130,7 +128,10 @@ class Avatar extends Equatable {
     required this.tmdb,
   });
 
-  static const Avatar empty = Avatar(gravatar: '', tmdb: '');
+  static const Avatar empty = Avatar(
+    gravatar: '',
+    tmdb: '',
+  );
 
   factory Avatar.fromRawJson(String str) => Avatar.fromJson(json.decode(str));
 
@@ -138,8 +139,7 @@ class Avatar extends Equatable {
 
   factory Avatar.fromJson(Map<String, dynamic> json) {
     return Avatar(
-      gravatar:
-          '${RemoteEnvironment.gravatar}${json['gravatar']['hash'] ?? ''}',
+      gravatar: json['gravatar']['hash'] ?? '',
       tmdb: json['tmdb']['avatar_path'] ?? '',
     );
   }

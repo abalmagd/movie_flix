@@ -7,25 +7,25 @@ class AuthState extends Equatable {
   const AuthState({
     required this.session,
     this.requestToken = '',
-    this.isLoading = false,
+    this.expiresAt = '',
   });
 
   final Session session;
   final String requestToken;
-  final bool isLoading;
+  final String expiresAt;
 
   AuthState copyWith({
     Session? session,
     String? requestToken,
-    bool? isLoading,
+    String? expiresAt,
   }) {
     return AuthState(
       session: session ?? this.session,
       requestToken: requestToken ?? this.requestToken,
-      isLoading: isLoading ?? this.isLoading,
+      expiresAt: expiresAt ?? this.expiresAt,
     );
   }
 
   @override
-  List<Object?> get props => [session, requestToken, isLoading];
+  List<Object?> get props => [session, requestToken, expiresAt];
 }

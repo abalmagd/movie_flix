@@ -20,37 +20,42 @@ class LandingScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final brightness = Theme.of(context).brightness;
     final auth = ref.watch(authControllerProvider);
-    final call = ref.read(authControllerProvider.notifier);
-
     return Scaffold(
       appBar: const PrimaryAppBar(title: Strings.appName),
-      body: Column(
-        children: [
-          Text(
-            Strings.letsFindAMovie,
-            style: theme.textTheme.headlineSmall,
-            textAlign: TextAlign.center,
-          ),
-          Expanded(
-            child: SvgPicture.asset(
-              brightness == Brightness.dark
-                  ? Assets.landingImageDark
-                  : Assets.landingImageLight,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: Spacing.s12),
+        child: Column(
+          children: [
+            Text(
+              Strings.letsFindAMovie,
+              style: theme.textTheme.headlineSmall,
+              textAlign: TextAlign.center,
             ),
-          ),
-          PrimaryButton(
-            onPressed: () => showModalBottomSheet(
-              context: context,
-              builder: (context) => const RedirectBottomSheet(),
+            Expanded(
+              child: SvgPicture.asset(
+                brightness == Brightness.dark
+                    ? Assets.landingImageDark
+                    : Assets.landingImageLight,
+                width: double.infinity,
+              ),
             ),
-            isLoading: auth.isLoading,
-            text: Strings.login,
-          ),
-          TextButton(
-            onPressed: auth.isLoading ? null : call.loginAsGuest,
-            child: const Text(Strings.continueAsGuest),
-          ),
-        ],
+            PrimaryButton(
+              onPressed: () => showModalBottomSheet(
+                context: context,
+                builder: (context) => const RedirectBottomSheet(),
+              ),
+              isLoading: auth is AsyncLoading,
+              text: Strings.login,
+            ),
+            const SizedBox(height: Spacing.s8),
+            TextButton(
+              onPressed: auth is AsyncLoading
+                  ? null
+                  : ref.read(authControllerProvider.notifier).loginAsGuest,
+              child: const Text(Strings.continueAsGuest),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -90,7 +95,7 @@ class RedirectBottomSheet extends ConsumerWidget {
               ref.read(authControllerProvider.notifier).requestToken();
               Navigator.pop(context);
             },
-            isLoading: auth.isLoading,
+            isLoading: auth is AsyncLoading,
             width: double.infinity,
             text: Strings.confirm,
           ),

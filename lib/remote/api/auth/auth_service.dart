@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:movie_flix/core/extensions.dart';
 import 'package:movie_flix/core/failure.dart';
 import 'package:movie_flix/remote/api/auth/auth_repository.dart';
 
@@ -13,11 +14,13 @@ import '../../../app/models/auth/session.dart';
 /// For example: When a guest session json is returned from the repository,
 /// the field [guest_session_id] is renamed to [session_id]
 abstract class BaseAuthService {
-  Future<Either<Failure, String>> getRequestToken();
+  Future<Either<Failure, Session>> loginAsGuest();
+
+  Future<Either<Failure, bool>> logout({required String sessionId});
+
+  Future<Either<Failure, Map<String, String>>> createRequestToken();
 
   Future<Either<Failure, Session>> login({required String requestToken});
-
-  Future<Either<Failure, bool>> logout({required String accessToken});
 }
 
 final baseAuthServiceProvider = Provider<BaseAuthService>((ref) {
@@ -30,9 +33,9 @@ class AuthService implements BaseAuthService {
   final BaseAuthRepository _baseAuthRepository;
 
   @override
-  Future<Either<Failure, String>> getRequestToken() async {
+  Future<Either<Failure, Session>> loginAsGuest() async {
     try {
-      final json = await _baseAuthRepository.getRequestToken();
+      final json = await _baseAuthRepository.loginAsGuest();
 
       final bool success = json['success'];
 
@@ -43,9 +46,39 @@ class AuthService implements BaseAuthService {
         );
       }
 
-      final requestToken = json['request_token'];
+      json.changeKeyName('guest_session_id', 'session_id');
+      json.addAll({'is_guest': true});
 
-      return Right(requestToken);
+      final session = Session.fromJson(json);
+      return Right(session);
+    } on Failure catch (failure) {
+      return Left(failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, Map<String, String>>> createRequestToken() async {
+    try {
+      final json = await _baseAuthRepository.createRequestToken();
+
+      final bool success = json['success'];
+
+      if (!success) {
+        throw Failure(
+          message: json['status_message'],
+          code: json['status_code'],
+        );
+      }
+
+      final String requestToken = json['request_token'];
+      final String expiresAt = json['expires_at'];
+
+      final data = {
+        'request_token': requestToken,
+        'expires_at': expiresAt,
+      };
+
+      return Right(data);
     } on Failure catch (failure) {
       return Left(failure);
     }
@@ -56,27 +89,16 @@ class AuthService implements BaseAuthService {
     try {
       final Map<String, dynamic> json = {};
 
-      final tokenJson = await _baseAuthRepository.login(
-        requestToken: requestToken,
-      );
+      final tokenJson = await _baseAuthRepository.login(requestToken);
 
       json.addEntries(tokenJson.entries);
 
-      final sessionJson = await _baseAuthRepository.getSessionId(
-        accessToken: tokenJson['access_token'],
-      );
-
-      json.addEntries(sessionJson.entries);
-
-      final profileJson = await _baseAuthRepository.getAccountDetails(
-        sessionId: sessionJson['session_id'],
-      );
+      final profileJson =
+          await _baseAuthRepository.getProfile(tokenJson['access_token']);
 
       json.addAll({'profile': profileJson});
 
-      final success = tokenJson['success'] &&
-          sessionJson['success'] &&
-          (profileJson['success'] ?? true);
+      final success = tokenJson['success'] && (profileJson['success'] ?? true);
 
       if (!success) {
         throw Failure(
@@ -93,9 +115,9 @@ class AuthService implements BaseAuthService {
   }
 
   @override
-  Future<Either<Failure, bool>> logout({required String accessToken}) async {
+  Future<Either<Failure, bool>> logout({required String sessionId}) async {
     try {
-      final json = await _baseAuthRepository.logout(accessToken: accessToken);
+      final json = await _baseAuthRepository.logout(sessionId);
 
       final bool success = json['success'];
 

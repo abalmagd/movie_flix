@@ -34,7 +34,11 @@ class PrimaryButton extends StatelessWidget {
         ),
         onPressed: isLoading ? null : onPressed,
         child: isLoading
-            ? const CircularProgressIndicator()
+            ? const SizedBox(
+                height: Spacing.s18,
+                width: Spacing.s18,
+                child: CircularProgressIndicator(),
+              )
             : Text(
                 text,
                 style: theme.elevatedButtonTheme.style?.textStyle?.resolve(

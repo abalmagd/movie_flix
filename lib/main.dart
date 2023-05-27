@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/app/features/home/home_screen.dart';
 import 'package:movie_flix/app/features/landing/landing_screen.dart';
-import 'package:movie_flix/app/riverpod/auth/auth_controller.dart';
 import 'package:movie_flix/app/theme/custom_theme.dart';
 import 'package:movie_flix/core/life_cycle_wrapper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app/models/auth/session.dart';
+import 'app/riverpod/auth/auth_controller.dart';
 import 'app/riverpod/config/config_controller.dart';
 import 'core/local_storage.dart';
 import 'core/routes.dart';
@@ -34,8 +34,8 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final config = ref.watch(configControllerProvider);
     final auth = ref.watch(authControllerProvider);
-    bool isLogged = auth.session != Session.empty;
-    return AppLifeCyclesWrapper(
+    bool isLogged = auth.value?.session != Session.empty;
+    return AppLifeCycleWrapper(
       ref: ref,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

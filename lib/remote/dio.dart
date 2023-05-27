@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 import 'package:movie_flix/core/utils.dart';
 
 import 'environment_variables.dart';
@@ -20,7 +21,7 @@ final dioProvider = Provider<Dio>(
       InterceptorsWrapper(
         onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
           Utils.logPrint(
-            message: '===>\n'
+            message: 'onRequest ===>\n'
                 'Path: ${options.method} ${options.baseUrl}${options.path}\n'
                 'Full URI: ${options.uri}\n'
                 'Data: ${options.data}\n'
@@ -28,28 +29,26 @@ final dioProvider = Provider<Dio>(
                 'Query Params: ${options.queryParameters}\n'
                 'Headers: ${options.headers.keys}\n'
                 'Response Type: ${options.responseType}',
-            name: 'onRequest Interceptor',
           );
           return handler.next(options);
         },
         onResponse: (Response response, ResponseInterceptorHandler handler) {
           Utils.logPrint(
-            message: '===>\n'
+            message: 'onResponse ===>\n'
                 'URI: ${response.realUri}\n'
                 'Status: ${response.statusCode} ${response.statusMessage}\n'
                 'Data: ${response.data}\n',
-            name: 'onResponse Interceptor',
           );
           return handler.next(response);
         },
         onError: (DioError e, ErrorInterceptorHandler handler) {
           Utils.logPrint(
-            message: '===>\n'
+            message: 'onError ===>\n'
                 'Type: ${e.type}\n'
                 'Message: ${e.message}\n'
                 'Data: ${e.error}\n'
                 'Response: ${e.response}',
-            name: 'onError Interceptor',
+            level: Level.error,
           );
           return handler.next(e);
         },
