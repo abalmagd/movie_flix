@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/app/riverpod/auth/auth_controller.dart';
 
-import '../app/riverpod/auth/auth_state.dart';
 
 class AppLifeCycleWrapper extends ConsumerStatefulWidget {
   const AppLifeCycleWrapper({
@@ -21,15 +20,13 @@ class AppLifeCycleWrapper extends ConsumerStatefulWidget {
 
 class _AppLifeCycleWrapperState extends ConsumerState<AppLifeCycleWrapper>
     with WidgetsBindingObserver {
-  late final AuthController authCall;
-  late final AsyncValue<AuthState> authWatch;
+  late final AuthController authController;
 
   @override
   initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    authCall = widget.ref.read(authControllerProvider.notifier);
-    final authWatch = widget.ref.watch(authControllerProvider);
+    authController = widget.ref.read(authControllerProvider.notifier);
   }
 
   @override
@@ -47,7 +44,7 @@ class _AppLifeCycleWrapperState extends ConsumerState<AppLifeCycleWrapper>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        authCall.setSession();
+        authController.setSession();
         break;
       case AppLifecycleState.inactive:
         break;

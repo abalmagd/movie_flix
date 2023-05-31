@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
+import 'package:movie_flix/remote/environment_variables.dart';
 import 'package:username_gen/username_gen.dart';
 
 /// Gravatar https://www.gravatar.com/avatar/c9e9fc152ee756a900db85757c29815d
@@ -48,33 +49,10 @@ class Profile extends Equatable {
     id: 0,
     iso6391: '',
     iso31661: '',
-    name: 'Unknown',
+    name: 'Error',
     includeAdult: false,
-    username: 'Couldn\'t get profile data',
+    username: 'with loading profile',
   );
-
-  Profile copyWith({
-    Avatar? avatar,
-    int? id,
-    String? iso6391,
-    String? iso31661,
-    String? name,
-    bool? includeAdult,
-    String? username,
-  }) =>
-      Profile(
-        avatar: avatar ?? this.avatar,
-        id: id ?? this.id,
-        iso6391: iso6391 ?? this.iso6391,
-        iso31661: iso31661 ?? this.iso31661,
-        name: name ?? this.name,
-        includeAdult: includeAdult ?? this.includeAdult,
-        username: username ?? this.username,
-      );
-
-  factory Profile.fromRawJson(String str) => Profile.fromJson(json.decode(str));
-
-  String toRawJson() => json.encode(toJson());
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
         avatar: Avatar.fromJson(json['avatar'] ?? Avatar.empty),
@@ -129,7 +107,7 @@ class Avatar extends Equatable {
   });
 
   static const Avatar empty = Avatar(
-    gravatar: '',
+    gravatar: RemoteEnvironment.gravatar,
     tmdb: '',
   );
 
@@ -139,7 +117,7 @@ class Avatar extends Equatable {
 
   factory Avatar.fromJson(Map<String, dynamic> json) {
     return Avatar(
-      gravatar: json['gravatar']['hash'] ?? '',
+      gravatar: '${RemoteEnvironment.gravatar}${json['gravatar']['hash']}',
       tmdb: json['tmdb']['avatar_path'] ?? '',
     );
   }

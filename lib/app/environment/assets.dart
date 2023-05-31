@@ -14,4 +14,6 @@ class Assets {
       'https://milnersblog.files.wordpress.com/2017/11/star-wars-the-last-jedi-japanese-movie-poster-in-english-banner.jpg?w=1200';
   static const tempImageBlue =
       'https://www.beebibelle.com.au/assets/full/Avatar_Banner1.jpg?20220613140726';
+
+  static const drawerIcon = '${Paths.icons}/drawer.svg';
 }

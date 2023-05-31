@@ -5,7 +5,6 @@ import 'package:movie_flix/app/environment/constants.dart';
 import 'package:movie_flix/app/environment/strings.dart';
 import 'package:movie_flix/app/riverpod/config/config_controller.dart';
 import 'package:movie_flix/app/widgets/drawer/drawer_button.dart';
-import 'package:movie_flix/remote/environment_variables.dart';
 
 import '../../environment/spacing.dart';
 import '../../riverpod/auth/auth_controller.dart';
@@ -62,8 +61,7 @@ class PrimaryDrawer extends ConsumerWidget {
               ),
               leading: CircleAvatar(
                 backgroundColor: Palette.neutral,
-                foregroundImage: NetworkImage(
-                    '${RemoteEnvironment.gravatar}${profile.avatar.gravatar}'),
+                foregroundImage: NetworkImage(profile.avatar.gravatar),
                 child: const Icon(Icons.person),
               ),
               trailing: const Icon(Icons.arrow_forward_ios, size: Spacing.s16),

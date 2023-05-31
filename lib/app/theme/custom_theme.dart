@@ -65,6 +65,12 @@ class CustomTheme {
         ),
       ),
       splashColor: Palette.white,
+      iconTheme: const IconThemeData(color: Palette.white),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          foregroundColor: Palette.white,
+        ),
+      ),
       tabBarTheme: const TabBarTheme(dividerColor: Palette.neutral),
     );
   }
@@ -127,6 +133,12 @@ class CustomTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(Spacing.s8),
           ),
+        ),
+      ),
+      iconTheme: const IconThemeData(color: Palette.black),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          foregroundColor: Palette.black,
         ),
       ),
       tabBarTheme: const TabBarTheme(dividerColor: Palette.neutral),

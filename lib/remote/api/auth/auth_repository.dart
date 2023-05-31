@@ -12,13 +12,13 @@ import '../../dio.dart';
 abstract class BaseAuthRepository {
   Future<Map<String, dynamic>> loginAsGuest();
 
-  Future<Map<String, dynamic>> logout(String sessionId);
-
   Future<Map<String, dynamic>> createRequestToken();
 
   Future<Map<String, dynamic>> login(String requestToken);
 
   Future<Map<String, dynamic>> getProfile(String sessionId);
+
+  Future<Map<String, dynamic>> logout(String sessionId);
 }
 
 final baseAuthRepositoryProvider = Provider<BaseAuthRepository>((ref) {
@@ -89,7 +89,7 @@ class AuthRepository implements BaseAuthRepository {
   @override
   Future<Map<String, dynamic>> logout(String sessionId) async {
     try {
-      final response = await _dio.post(
+      final response = await _dio.delete(
         RemoteEnvironment.session,
         data: {'session_id': sessionId},
       );

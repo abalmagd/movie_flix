@@ -37,7 +37,7 @@ final dioProvider = Provider<Dio>(
             message: 'onResponse ===>\n'
                 'URI: ${response.realUri}\n'
                 'Status: ${response.statusCode} ${response.statusMessage}\n'
-                'Data: ${response.data}\n',
+                'Data: ${response.data.runtimeType}\n',
           );
           return handler.next(response);
         },

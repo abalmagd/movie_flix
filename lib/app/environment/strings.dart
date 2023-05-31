@@ -5,7 +5,8 @@ class Strings {
   static const login = 'Login';
   static const continueAsGuest = 'Continue as Guest';
   static const home = 'Home';
-  static const latest = 'Latest';
+  static const popular = 'Popular';
+  static const topRated = 'Top Rated';
   static const trending = 'Trending';
   static const upcoming = 'Upcoming';
   static const viewAll = 'View All';
@@ -17,7 +18,10 @@ class Strings {
   static const userSession = 'User Session';
   static const headsUp = 'Heads Up!';
   static const confirm = 'Confirm';
+  static const inTheaters = 'In Theaters';
   static const loginSuccess = 'Login Success';
   static const redirectWarning = 'You are about to be redirected to approve '
       'your login on themoviedb.org.';
+  static const error = 'An error occurred.';
+  static const tryAgain = 'Try again';
 }

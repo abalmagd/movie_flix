@@ -6,6 +6,8 @@ class Palette {
   static const black = Colors.black;
   static const transparent = Colors.transparent;
 
+  static const starOrange = Colors.orange;
+
   static const danger = Color(0xFFFF5252);
   static const ok = Color(0xFF4CAF50);
   static const neutral = Color(0xFF607D8B);

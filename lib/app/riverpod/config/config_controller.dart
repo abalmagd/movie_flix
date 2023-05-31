@@ -18,6 +18,8 @@ class ConfigController extends Notifier<ConfigState> {
 
     final ThemeMode themeMode = getThemeMode() ?? ThemeMode.dark;
 
+    Utils.logPrint(message: 'Building $runtimeType');
+
     return ConfigState(themeMode: themeMode);
   }
 

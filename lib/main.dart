@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'app/models/auth/session.dart';
 import 'app/riverpod/auth/auth_controller.dart';
 import 'app/riverpod/config/config_controller.dart';
+import 'app/riverpod/home/home_controller.dart';
 import 'core/local_storage.dart';
 import 'core/routes.dart';
 
@@ -34,6 +35,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final config = ref.watch(configControllerProvider);
     final auth = ref.watch(authControllerProvider);
+    final home = ref.read(homeControllerProvider);
     bool isLogged = auth.value?.session != Session.empty;
     return AppLifeCycleWrapper(
       ref: ref,

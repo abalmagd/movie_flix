@@ -94,7 +94,7 @@ class AuthService implements BaseAuthService {
       json.addEntries(tokenJson.entries);
 
       final profileJson =
-          await _baseAuthRepository.getProfile(tokenJson['access_token']);
+          await _baseAuthRepository.getProfile(tokenJson['session_id']);
 
       json.addAll({'profile': profileJson});
 
@@ -102,8 +102,8 @@ class AuthService implements BaseAuthService {
 
       if (!success) {
         throw Failure(
-          message: tokenJson['status_message'],
-          code: tokenJson['status_code'],
+          message: json['status_message'],
+          code: json['status_code'],
         );
       }
 

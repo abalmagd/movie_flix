@@ -28,7 +28,7 @@ class Session extends Equatable {
   String toRawJson() => json.encode(toJson());
 
   factory Session.fromJson(Map<String, dynamic> json) => Session(
-    sessionId: json['session_id'] ?? '',
+    sessionId: json['session_id'],
         profile: json['profile'] != null
             ? Profile.fromJson(json['profile'])
             : (json['is_guest'] ? Profile.guest : Profile.unknown),

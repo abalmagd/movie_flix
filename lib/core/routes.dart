@@ -7,7 +7,7 @@ import '../app/features/home/home_screen.dart';
 class Routing {
   static final routes = {
     LandingScreen.route: (context) => const LandingScreen(),
-    HomeScreen.route: (context) => HomeScreen(),
+    HomeScreen.route: (context) => const HomeScreen(),
   };
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -17,7 +17,7 @@ class Routing {
       case LandingScreen.route:
         return MaterialPageRoute(builder: (context) => const LandingScreen());
       case HomeScreen.route:
-        return MaterialPageRoute(builder: (context) => HomeScreen());
+        return MaterialPageRoute(builder: (context) => const HomeScreen());
       default:
         return MaterialPageRoute(builder: (context) => const BadRouteScreen());
     }

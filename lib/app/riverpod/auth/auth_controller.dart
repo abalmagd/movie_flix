@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:movie_flix/remote/api/auth/auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -22,7 +23,6 @@ class AuthController extends AsyncNotifier<AuthState> {
   FutureOr<AuthState> build() {
     _sharedPrefs = ref.read(sharedPrefsProvider);
     _authService = ref.read(baseAuthServiceProvider);
-
     final sessionString = _sharedPrefs.get(key: SharedPrefsKeys.session) ?? '';
 
     final session = (sessionString as String).isNotEmpty
@@ -30,22 +30,12 @@ class AuthController extends AsyncNotifier<AuthState> {
         : Session.empty;
 
     logData(session: session);
+    Utils.logPrint(message: 'Building $runtimeType');
     return AuthState(session: session);
   }
 
   void logData({Session? session}) {
     Utils.logPrint(message: (session ?? state.value?.session).toString());
-  }
-
-  void setLocalSession() {
-    state = const AsyncLoading();
-    final sessionString = _sharedPrefs.get(key: SharedPrefsKeys.session) ?? '';
-
-    final session = (sessionString as String).isNotEmpty
-        ? Session.fromRawJson(sessionString)
-        : Session.empty;
-
-    state = AsyncData(state.value!.copyWith(session: session));
   }
 
   void setSession({Session? session}) {
@@ -55,33 +45,29 @@ class AuthController extends AsyncNotifier<AuthState> {
         key: SharedPrefsKeys.session,
         value: session.toRawJson(),
       );
-      Utils.toast(
-        message: session == Session.empty ? 'Logout Success' : 'Login Success',
-        severity: ToastSeverity.ok,
-      );
+
       logData();
       return;
     }
 
-    final requestToken =
+    final sessionRequestJson =
         _sharedPrefs.get(key: SharedPrefsKeys.sessionRequest) as String?;
 
-    if (requestToken != null) {
-      final sessionRequest = jsonDecode(requestToken);
+    if (sessionRequestJson != null) {
+      final sessionRequest = jsonDecode(sessionRequestJson);
+      final String expiresAt = sessionRequest['expires_at'];
       state = AsyncData(
         state.value!.copyWith(
           requestToken: sessionRequest['request_token'],
           expiresAt: sessionRequest['expires_at'],
         ),
       );
-
       final now = DateTime.now();
-
-      if (DateTime.parse(state.value!.expiresAt).isAfter(now)) login();
-      return;
+      final dateString = expiresAt.replaceAll(' UTC', 'Z').trim();
+      if (DateTime.parse(dateString).toLocal().isAfter(now)) {
+        login();
+      }
     }
-
-    setLocalSession();
   }
 
   void loginAsGuest() async {
@@ -98,7 +84,7 @@ class AuthController extends AsyncNotifier<AuthState> {
     );
   }
 
-  Future<void> requestToken() async {
+  void requestToken() async {
     state = const AsyncLoading();
 
     final result = await _authService.createRequestToken();
@@ -114,12 +100,6 @@ class AuthController extends AsyncNotifier<AuthState> {
           value: jsonEncode(sessionRequest),
         );
 
-        final Uri url = Uri.parse(
-          '${RemoteEnvironment.tmdbDomain}'
-          'auth/access?request_token=${sessionRequest['request_token']}',
-        );
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-
         state = AsyncData(
           state.value!.copyWith(
             requestToken: sessionRequest['request_token'],
@@ -127,7 +107,18 @@ class AuthController extends AsyncNotifier<AuthState> {
           ),
         );
 
-        setSession(session: Session.empty);
+        final Uri url = Uri.parse(
+          '${RemoteEnvironment.tmdbDomain}'
+          'authenticate/${sessionRequest['request_token']}',
+        );
+        await launchUrl(url, mode: LaunchMode.externalApplication)
+            ? null
+            : Utils.toast(
+                message:
+                    'Failed to redirect, please make sure you have a browser',
+                severity: ToastSeverity.danger,
+                length: Toast.LENGTH_LONG,
+              );
       },
     );
   }
@@ -156,6 +147,7 @@ class AuthController extends AsyncNotifier<AuthState> {
 
     if (state.value!.session.isGuest) {
       setSession(session: Session.empty);
+      Utils.toast(message: 'Logout Success!');
       return;
     }
 
@@ -163,11 +155,14 @@ class AuthController extends AsyncNotifier<AuthState> {
         await _authService.logout(sessionId: state.value!.session.sessionId);
 
     result.fold(
-      (failure) {
+          (failure) {
         state = AsyncError(failure, StackTrace.current);
         failure.toast();
       },
-      (success) => setSession(session: Session.empty),
+      (success) {
+        setSession(session: Session.empty);
+        Utils.toast(message: 'Logout Success!');
+      },
     );
   }
 }

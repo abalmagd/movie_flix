@@ -6,12 +6,20 @@ class RemoteEnvironment {
 
   static const tmdbDomain = 'https://www.themoviedb.org/';
   static const gravatar = 'https://www.gravatar.com/avatar/';
+  static const tmdbImage = 'https://image.tmdb.org/t/p/w1280';
 
-  static const authentication = '$baseUrl/authentication';
+  static const authentication = '/authentication';
   static const session = '$authentication/session';
   static const newSession = '$authentication/session/new';
   static const newGuestSession = '$authentication/guest_session/new';
   static const createRequestToken = '$authentication/token/new';
 
-  static const account = '$baseUrl/account';
+  static const account = '/account';
+
+  static const movie = '/movie';
+  static const popularMovies = '$movie/popular';
+  static const topRatedMovies = '$movie/top_rated';
+  static const nowPlayingMovies = '$movie/now_playing';
+  static const upcomingMovies = '$movie/upcoming';
+  static const latestMovie = '$movie/latest';
 }

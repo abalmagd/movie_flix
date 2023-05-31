@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:movie_flix/app/environment/spacing.dart';
 import 'package:movie_flix/app/riverpod/auth/auth_controller.dart';
-import 'package:movie_flix/app/widgets/primary_app_bar.dart';
 import 'package:movie_flix/core/extensions.dart';
 
 import '../../environment/assets.dart';
 import '../../environment/constants.dart';
 import '../../environment/strings.dart';
+import '../../widgets/primary_appbar.dart';
 import '../../widgets/primary_button.dart';
 
 class LandingScreen extends ConsumerWidget {
