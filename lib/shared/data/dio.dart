@@ -44,6 +44,7 @@ final dioProvider = Provider<Dio>(
         onError: (DioError e, ErrorInterceptorHandler handler) {
           Utils.logPrint(
             message: 'onError ===>\n'
+                'Path: ${e.requestOptions.uri}\n'
                 'Type: ${e.type}\n'
                 'Message: ${e.message}\n'
                 'Data: ${e.error}\n'

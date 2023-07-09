@@ -2,11 +2,10 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/features/home/presentation/riverpod/home_controller.dart';
-import 'package:movie_flix/features/home/presentation/riverpod/home_state.dart';
 import 'package:movie_flix/features/home/presentation/widgets/sliver_delegates.dart';
 import 'package:movie_flix/shared/data/environment_variables.dart';
 import 'package:movie_flix/shared/presentation/drawer/primary_drawer.dart';
-import 'package:movie_flix/shared/presentation/media_poster.dart';
+import 'package:movie_flix/shared/presentation/movie_poster.dart';
 import 'package:movie_flix/shared/presentation/primary_sliver_appbar.dart';
 import 'package:movie_flix/utils/strings.dart';
 
@@ -32,9 +31,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     Future(() {
-      ref
-          .read(homeControllerProvider.notifier)
-          .getMovieListByType(type: MovieListType.nowPlaying);
+      ref.read(homeControllerProvider.notifier)
+        ..getMovieGenres()
+        ..getNowPlayingMovies()
+        ..getPopularMovies()
+        ..getTopRatedMovies()
+        ..getTrendingMovies()
+        ..getUpcomingMovies();
     });
   }
 
@@ -125,7 +128,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       items: movies.map(
                         (movie) {
                           return Image.network(
-                            '${RemoteEnvironment.tmdbImage}${movie.backdropPath}',
+                            '${RemoteEnvironment.tmdbImage}${RemoteEnvironment.backdropQuality}${movie.backdropPath}',
                             fit: BoxFit.cover,
                             width: double.infinity,
                           );
@@ -155,9 +158,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             onPressed: () {
                               ref
                                   .read(homeControllerProvider.notifier)
-                                  .getMovieListByType(
-                                    type: MovieListType.nowPlaying,
-                                  );
+                                  .getNowPlayingMovies();
                             },
                             style: theme.textButtonTheme.style?.copyWith(
                                 visualDensity: VisualDensity.compact,
@@ -226,26 +227,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-class MoviesTab extends ConsumerStatefulWidget {
-  const MoviesTab({Key? key}) : super(key: key);
+class MoviesTab extends ConsumerWidget {
+  const MoviesTab({super.key});
 
   @override
-  ConsumerState<MoviesTab> createState() => _MoviesTabState();
-}
-
-class _MoviesTabState extends ConsumerState<MoviesTab> {
-  @override
-  void initState() {
-    super.initState();
-    Future(() {
-      ref
-          .read(homeControllerProvider.notifier)
-          .getMovieListByType(type: MovieListType.popular);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // final call = ref.read(homeControllerProvider.notifier);
     final watch = ref.watch(homeControllerProvider);
     final theme = Theme.of(context);
@@ -289,7 +275,7 @@ class _MoviesTabState extends ConsumerState<MoviesTab> {
                   onPressed: () {
                     ref
                         .read(homeControllerProvider.notifier)
-                        .getMovieListByType(type: MovieListType.popular);
+                        .getPopularMovies();
                   },
                   child: Text(
                     Strings.tryAgain,
@@ -343,7 +329,7 @@ class _MoviesTabState extends ConsumerState<MoviesTab> {
                   onPressed: () {
                     ref
                         .read(homeControllerProvider.notifier)
-                        .getMovieListByType(type: MovieListType.popular);
+                        .getPopularMovies();
                   },
                   child: Text(
                     Strings.tryAgain,
@@ -397,7 +383,7 @@ class _MoviesTabState extends ConsumerState<MoviesTab> {
                   onPressed: () {
                     ref
                         .read(homeControllerProvider.notifier)
-                        .getMovieListByType(type: MovieListType.popular);
+                        .getPopularMovies();
                   },
                   child: Text(
                     Strings.tryAgain,
@@ -451,7 +437,7 @@ class _MoviesTabState extends ConsumerState<MoviesTab> {
                   onPressed: () {
                     ref
                         .read(homeControllerProvider.notifier)
-                        .getMovieListByType(type: MovieListType.popular);
+                        .getPopularMovies();
                   },
                   child: Text(
                     Strings.tryAgain,

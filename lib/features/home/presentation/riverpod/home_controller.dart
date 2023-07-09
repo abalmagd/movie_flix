@@ -1,11 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:movie_flix/utils/utils.dart';
 import 'package:movie_flix/features/home/data/home_service.dart';
+import 'package:movie_flix/utils/utils.dart';
 
 import '../../../../shared/data/local_storage.dart';
-import '../../../../shared/domain/movie.dart';
 import 'home_state.dart';
 
 final homeControllerProvider =
@@ -23,119 +22,113 @@ class HomeController extends Notifier<HomeState> {
     _homeService = ref.read(baseHomeServiceProvider);
 
     return const HomeState(
-      popularMovies: AsyncData([]),
-      topRatedMovies: AsyncData([]),
-      trendingMovies: AsyncData([]),
-      nowPlayingMovies: AsyncData([]),
-      upcomingMovies: AsyncData([]),
+        popularMovies: AsyncData([]),
+        topRatedMovies: AsyncData([]),
+        trendingMovies: AsyncData([]),
+        nowPlayingMovies: AsyncData([]),
+        upcomingMovies: AsyncData([]),
+        movieGenres: AsyncData([]));
+  }
+
+  Future<void> getNowPlayingMovies({int page = 1}) async {
+    state = state.copyWith(nowPlayingMovies: const AsyncLoading());
+
+    final result = await _homeService.getNowPlayingMovies();
+
+    result.fold(
+      (failure) {
+        state = state.copyWith(
+          nowPlayingMovies: AsyncError(failure, StackTrace.current),
+        );
+      },
+      (list) {
+        state = state.copyWith(nowPlayingMovies: AsyncData(list));
+      },
     );
   }
 
-  Future<List<Movie>> getMovieListByType({
-    required MovieListType type,
-    int page = 1,
-    bool init = false, // if used within riverpod build, set to true
-  }) async {
-    List<Movie>? movies;
-    switch (type) {
-      case MovieListType.popular:
-        if (!init) state = state.copyWith(popularMovies: const AsyncLoading());
+  Future<void> getPopularMovies({int page = 1}) async {
+    state = state.copyWith(popularMovies: const AsyncLoading());
 
-        final result = await _homeService.getPopularMovies();
-        result.fold(
-          (failure) {
-            if (!init) {
-              state = state.copyWith(
-                  popularMovies: AsyncError(failure, StackTrace.current));
-            }
-          },
-          (list) {
-            if (!init) state = state.copyWith(popularMovies: AsyncData(list));
+    final result = await _homeService.getPopularMovies();
 
-            movies = list;
-          },
+    result.fold(
+      (failure) {
+        state = state.copyWith(
+          popularMovies: AsyncError(failure, StackTrace.current),
         );
-        break;
-      case MovieListType.topRated:
-        if (!init) state = state.copyWith(topRatedMovies: const AsyncLoading());
+      },
+      (list) {
+        state = state.copyWith(popularMovies: AsyncData(list));
+      },
+    );
+  }
 
-        final result = await _homeService.getTopRatedMovies();
-        result.fold(
-          (failure) {
-            if (!init) {
-              state = state.copyWith(
-                topRatedMovies: AsyncError(failure, StackTrace.current),
-              );
-            }
-          },
-          (list) {
-            if (!init) state = state.copyWith(topRatedMovies: AsyncData(list));
+  Future<void> getTopRatedMovies({int page = 1}) async {
+    state = state.copyWith(topRatedMovies: const AsyncLoading());
 
-            movies = list;
-          },
+    final result = await _homeService.getTopRatedMovies();
+
+    result.fold(
+      (failure) {
+        state = state.copyWith(
+          topRatedMovies: AsyncError(failure, StackTrace.current),
         );
-        break;
-      case MovieListType.trending:
-        if (!init) state = state.copyWith(trendingMovies: const AsyncLoading());
+      },
+      (list) {
+        state = state.copyWith(topRatedMovies: AsyncData(list));
+      },
+    );
+  }
 
-        final result = await _homeService.getTrendingMovies();
-        result.fold(
-          (failure) {
-            if (!init) {
-              state = state.copyWith(
-                trendingMovies: AsyncError(failure, StackTrace.current),
-              );
-            }
-          },
-          (list) {
-            if (!init) state = state.copyWith(trendingMovies: AsyncData(list));
+  Future<void> getTrendingMovies({int page = 1}) async {
+    state = state.copyWith(trendingMovies: const AsyncLoading());
 
-            movies = list;
-          },
+    final result = await _homeService.getTrendingMovies();
+
+    result.fold(
+      (failure) {
+        state = state.copyWith(
+          trendingMovies: AsyncError(failure, StackTrace.current),
         );
-        break;
-      case MovieListType.nowPlaying:
-        if (!init) {
-          state = state.copyWith(nowPlayingMovies: const AsyncLoading());
-        }
+      },
+      (list) {
+        state = state.copyWith(trendingMovies: AsyncData(list));
+      },
+    );
+  }
 
-        final result = await _homeService.getNowPlayingMovies();
-        result.fold(
-          (failure) {
-            if (!init) {
-              state = state.copyWith(
-                nowPlayingMovies: AsyncError(failure, StackTrace.current),
-              );
-            }
-          },
-          (list) {
-            if (!init) {
-              state = state.copyWith(nowPlayingMovies: AsyncData(list));
-            }
+  Future<void> getUpcomingMovies({int page = 1}) async {
+    state = state.copyWith(upcomingMovies: const AsyncLoading());
 
-            movies = list;
-          },
+    final result = await _homeService.getUpcomingMovies();
+
+    result.fold(
+      (failure) {
+        state = state.copyWith(
+          upcomingMovies: AsyncError(failure, StackTrace.current),
         );
-        break;
-      case MovieListType.upcoming:
-        if (!init) state = state.copyWith(upcomingMovies: const AsyncLoading());
-        final result = await _homeService.getUpcomingMovies();
-        result.fold(
-          (failure) {
-            if (!init) {
-              state = state.copyWith(
-                upcomingMovies: AsyncError(failure, StackTrace.current),
-              );
-            }
-          },
-          (list) {
-            if (!init) state = state.copyWith(upcomingMovies: AsyncData(list));
-            movies = list;
-          },
-        );
-        break;
-    }
+      },
+      (list) {
+        state = state.copyWith(upcomingMovies: AsyncData(list));
+      },
+    );
+  }
 
-    return movies ?? [];
+  Future<void> getMovieGenres() async {
+    state = state.copyWith(movieGenres: const AsyncLoading());
+
+    final result = await _homeService.getMovieGenres();
+
+    result.fold(
+      (failure) {
+        state = state.copyWith(
+          movieGenres: AsyncError(failure, StackTrace.current),
+        );
+      },
+      (genres) {
+        state = state.copyWith(movieGenres: AsyncData(genres));
+      },
+    );
   }
 }

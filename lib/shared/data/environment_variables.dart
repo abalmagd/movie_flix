@@ -6,7 +6,9 @@ class RemoteEnvironment {
 
   static const tmdbDomain = 'https://www.themoviedb.org/';
   static const gravatar = 'https://www.gravatar.com/avatar/';
-  static const tmdbImage = 'https://image.tmdb.org/t/p/w1280';
+  static const tmdbImage = 'https://image.tmdb.org/t/p/';
+  static const posterQuality = 'w342';
+  static const backdropQuality = 'w780';
 
   static const authentication = '/authentication';
   static const session = '$authentication/session';
@@ -21,5 +23,8 @@ class RemoteEnvironment {
   static const topRatedMovies = '$movie/top_rated';
   static const nowPlayingMovies = '$movie/now_playing';
   static const upcomingMovies = '$movie/upcoming';
-  static const latestMovie = '$movie/latest';
+  static const trendingMovies = '/trending/movie/day';
+
+  static const genre = '/genre';
+  static const movieGenres = '$genre$movie/list';
 }

@@ -1,27 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:movie_flix/features/home/presentation/riverpod/home_controller.dart';
 import 'package:movie_flix/shared/data/environment_variables.dart';
 import 'package:movie_flix/shared/presentation/frosted_container.dart';
-import 'package:movie_flix/utils/utils.dart';
 
 import '../../config/theme/palette.dart';
 import '../domain/movie.dart';
 
-class MoviePoster extends StatefulWidget {
+class MoviePoster extends ConsumerStatefulWidget {
   const MoviePoster({Key? key, required this.movie}) : super(key: key);
 
   final Movie movie;
 
   @override
-  State<MoviePoster> createState() => _MoviePosterState();
+  ConsumerState<MoviePoster> createState() => _MoviePosterState();
 }
 
-class _MoviePosterState extends State<MoviePoster> {
+class _MoviePosterState extends ConsumerState<MoviePoster> {
   bool showInfo = false;
   int t = 0;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final watch = ref.watch(homeControllerProvider);
     return AspectRatio(
       aspectRatio: 2 / 3,
       child: ClipRRect(
@@ -33,7 +35,7 @@ class _MoviePosterState extends State<MoviePoster> {
           child: Stack(
             children: [
               Image.network(
-                '${RemoteEnvironment.tmdbImage}${widget.movie.posterPath}?t=$t',
+                '${RemoteEnvironment.tmdbImage}${RemoteEnvironment.posterQuality}${widget.movie.posterPath}?t=$t',
                 errorBuilder: (_, __, ___) {
                   setState(() {
                     t++;
@@ -76,27 +78,44 @@ class _MoviePosterState extends State<MoviePoster> {
                                     direction: Axis.horizontal,
                                     spacing: 4,
                                     runSpacing: 8,
-                                    children: widget.movie.genreIds
+                                    children: widget.movie.genresIds
                                         .map(
-                                          (e) => Container(
+                                          (id) => Container(
                                             padding: const EdgeInsets.symmetric(
                                               horizontal: 8,
                                               vertical: 4,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: Utils.randomColor(),
+                                              color: Palette.white
+                                                  .withOpacity(0.24),
                                               border: Border.all(
                                                 color: Palette.white,
                                               ),
                                               borderRadius:
                                                   BorderRadius.circular(20),
                                             ),
-                                            child: Text(
-                                              'genre',
-                                              style: theme.textTheme.bodySmall
-                                                  ?.copyWith(
-                                                color: Palette.white,
-                                              ),
+                                            child: watch.movieGenres.when(
+                                              data: (genres) {
+                                                return Text(
+                                                  genres
+                                                      .firstWhere(
+                                                        (genre) =>
+                                                            genre.id == id,
+                                                      )
+                                                      .name,
+                                                  style: theme
+                                                      .textTheme.bodySmall
+                                                      ?.copyWith(
+                                                    color: Palette.white,
+                                                  ),
+                                                );
+                                              },
+                                              error: (_, __) {
+                                                return const Text('failed');
+                                              },
+                                              loading: () {
+                                                return const CircularProgressIndicator();
+                                              },
                                             ),
                                           ),
                                         )
@@ -119,7 +138,7 @@ class _MoviePosterState extends State<MoviePoster> {
                                     size: 20,
                                   ),
                                   Text(
-                                    '${widget.movie.voteAverage}',
+                                    widget.movie.voteAverage.toStringAsFixed(1),
                                     style: theme.textTheme.bodyLarge?.copyWith(
                                       color: Palette.white,
                                     ),

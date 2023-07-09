@@ -36,6 +36,7 @@ dependencies:
   fluttertoast: ^8.2.1
   enum_to_string: ^2.0.1
   flutter_riverpod: ^2.3.6
+  flutter_rating_bar: ^4.0.1
   dartz: ^0.10.1
   dio: ^5.1.2
   username_gen: ^1.0.4

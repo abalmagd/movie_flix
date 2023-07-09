@@ -29,8 +29,8 @@ class AuthController extends AsyncNotifier<AuthState> {
         ? Session.fromRawJson(sessionString)
         : Session.empty;
 
-    logData(session: session);
     Utils.logPrint(message: 'Building $runtimeType');
+    logData(session: session);
     return AuthState(session: session);
   }
 
