@@ -6,9 +6,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:movie_flix/features/auth/data/auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../shared/data/environment_variables.dart';
 import '../../../../shared/data/local_storage.dart';
 import '../../../../utils/utils.dart';
-import '../../../../shared/data/environment_variables.dart';
 import '../../domain/session.dart';
 import 'auth_state.dart';
 
@@ -111,6 +111,7 @@ class AuthController extends AsyncNotifier<AuthState> {
           '${RemoteEnvironment.tmdbDomain}'
           'authenticate/${sessionRequest['request_token']}',
         );
+
         await launchUrl(url, mode: LaunchMode.externalApplication)
             ? null
             : Utils.toast(

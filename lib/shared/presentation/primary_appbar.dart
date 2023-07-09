@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/shared/presentation/theme_icon_button.dart';
 
 import '../../features/auth/presentation/riverpod/auth_controller.dart';
-import '../../config/riverpod/config_controller.dart';
 
 class PrimaryAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const PrimaryAppBar({
@@ -21,7 +20,6 @@ class PrimaryAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final call = ref.read(configControllerProvider.notifier);
     final auth = ref.read(authControllerProvider);
     return AppBar(
       title: Text(
@@ -30,18 +28,7 @@ class PrimaryAppBar extends ConsumerWidget implements PreferredSizeWidget {
             ?.copyWith(color: theme.colorScheme.primary),
       ),
       centerTitle: centerTitle,
-      actions: [
-        ThemeIconButton(
-          onPressed: () => call.changeThemeMode(context),
-        ),
-        IconButton(
-          onPressed: () {
-            /*auth.session.value.isGuest ? Utils.toast(message: 'Guest Session')
-                : null;*/
-          },
-          icon: const Icon(Icons.person),
-        ),
-      ],
+      actions: const [ThemeIconButton()],
     );
   }
 }

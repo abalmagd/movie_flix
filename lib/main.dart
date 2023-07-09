@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:movie_flix/features/home/presentation/home_screen.dart';
-import 'package:movie_flix/features/auth/presentation/landing_screen.dart';
 import 'package:movie_flix/config/theme/custom_theme.dart';
+import 'package:movie_flix/features/auth/presentation/auth_screen.dart';
+import 'package:movie_flix/features/home/presentation/home_screen.dart';
 import 'package:movie_flix/utils/life_cycle_wrapper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'config/riverpod/config_controller.dart';
+import 'config/routes.dart';
 import 'features/auth/domain/session.dart';
 import 'features/auth/presentation/riverpod/auth_controller.dart';
-import 'config/riverpod/config_controller.dart';
-import 'features/home/presentation/riverpod/home_controller.dart';
 import 'shared/data/local_storage.dart';
-import 'config/routes.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +34,6 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final config = ref.watch(configControllerProvider);
     final auth = ref.watch(authControllerProvider);
-    final home = ref.read(homeControllerProvider);
     bool isLogged = auth.value?.session != Session.empty;
     return AppLifeCycleWrapper(
       ref: ref,
@@ -49,7 +47,7 @@ class MyApp extends ConsumerWidget {
           darkTheme: CustomTheme.darkTheme(context),
           routes: Routing.routes,
           onGenerateRoute: Routing.onGenerateRoute,
-          home: isLogged ? const HomeScreen() : const LandingScreen(),
+          home: isLogged ? const HomeScreen() : const AuthScreen(),
         ),
       ),
     );

@@ -4,15 +4,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:movie_flix/features/auth/presentation/riverpod/auth_controller.dart';
 import 'package:movie_flix/utils/extensions.dart';
 
-import '../../../utils/assets.dart';
 import '../../../config/constants.dart';
-import '../../../utils/strings.dart';
 import '../../../shared/presentation/primary_appbar.dart';
 import '../../../shared/presentation/primary_button.dart';
+import '../../../utils/assets.dart';
+import '../../../utils/strings.dart';
 
-class LandingScreen extends ConsumerWidget {
-  const LandingScreen({Key? key}) : super(key: key);
-  static const route = '/landing';
+class AuthScreen extends ConsumerWidget {
+  const AuthScreen({Key? key}) : super(key: key);
+  static const route = '/auth';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

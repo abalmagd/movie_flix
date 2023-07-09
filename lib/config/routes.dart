@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:movie_flix/features/auth/presentation/landing_screen.dart';
+import 'package:movie_flix/features/auth/presentation/auth_screen.dart';
 
-import '../utils/strings.dart';
 import '../features/home/presentation/home_screen.dart';
+import '../utils/strings.dart';
 
 class Routing {
   static final routes = {
-    LandingScreen.route: (context) => const LandingScreen(),
+    AuthScreen.route: (context) => const AuthScreen(),
     HomeScreen.route: (context) => const HomeScreen(),
   };
 
@@ -14,8 +14,8 @@ class Routing {
     final args = settings.arguments;
 
     switch (settings.name) {
-      case LandingScreen.route:
-        return MaterialPageRoute(builder: (context) => const LandingScreen());
+      case AuthScreen.route:
+        return MaterialPageRoute(builder: (context) => const AuthScreen());
       case HomeScreen.route:
         return MaterialPageRoute(builder: (context) => const HomeScreen());
       default:

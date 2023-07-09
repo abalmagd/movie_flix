@@ -1,14 +1,15 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:movie_flix/shared/presentation/media_poster.dart';
-import 'package:movie_flix/utils/strings.dart';
 import 'package:movie_flix/features/home/presentation/riverpod/home_controller.dart';
 import 'package:movie_flix/features/home/presentation/riverpod/home_state.dart';
 import 'package:movie_flix/features/home/presentation/widgets/sliver_delegates.dart';
-import 'package:movie_flix/shared/presentation/drawer/primary_drawer.dart';
-import 'package:movie_flix/shared/presentation/primary_sliver_appbar.dart';
 import 'package:movie_flix/shared/data/environment_variables.dart';
+import 'package:movie_flix/shared/presentation/drawer/primary_drawer.dart';
+import 'package:movie_flix/shared/presentation/media_poster.dart';
+import 'package:movie_flix/shared/presentation/primary_sliver_appbar.dart';
+import 'package:movie_flix/utils/strings.dart';
+
 import '../../../config/theme/palette.dart';
 import '../../../shared/presentation/frosted_container.dart';
 
@@ -227,7 +228,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
 class MoviesTab extends ConsumerStatefulWidget {
   const MoviesTab({Key? key}) : super(key: key);
-  static const route = '/home';
 
   @override
   ConsumerState<MoviesTab> createState() => _MoviesTabState();
@@ -246,9 +246,10 @@ class _MoviesTabState extends ConsumerState<MoviesTab> {
 
   @override
   Widget build(BuildContext context) {
-    final call = ref.read(homeControllerProvider.notifier);
+    // final call = ref.read(homeControllerProvider.notifier);
     final watch = ref.watch(homeControllerProvider);
-    final read = ref.read(homeControllerProvider);
+    final theme = Theme.of(context);
+    // final read = ref.read(homeControllerProvider);
     return Column(
       children: [
         // Popular
@@ -270,16 +271,39 @@ class _MoviesTabState extends ConsumerState<MoviesTab> {
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) =>
                     MoviePoster(movie: movies[index]),
-                separatorBuilder: (context, index) => const SizedBox(width: 6),
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemCount: movies.length,
               ),
             );
           },
           error: (_, __) {
-            return const Placeholder();
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  Strings.error,
+                  style: theme.textTheme.labelLarge,
+                ),
+                const SizedBox(width: 4),
+                TextButton(
+                  onPressed: () {
+                    ref
+                        .read(homeControllerProvider.notifier)
+                        .getMovieListByType(type: MovieListType.popular);
+                  },
+                  child: Text(
+                    Strings.tryAgain,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      decoration: TextDecoration.underline,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ],
+            );
           },
           loading: () {
-            return const CircularProgressIndicator();
+            return CircularProgressIndicator(color: theme.primaryColor);
           },
         ),
         // Top Rated
@@ -293,14 +317,48 @@ class _MoviesTabState extends ConsumerState<MoviesTab> {
             ),
           ],
         ),
-        SizedBox(
-          height: 300,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) => const Placeholder(),
-            separatorBuilder: (context, index) => const SizedBox(width: 6),
-            itemCount: 5,
-          ),
+        watch.topRatedMovies.when(
+          data: (movies) {
+            return SizedBox(
+              height: 200,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) =>
+                    MoviePoster(movie: movies[index]),
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                itemCount: movies.length,
+              ),
+            );
+          },
+          error: (_, __) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  Strings.error,
+                  style: theme.textTheme.labelLarge,
+                ),
+                const SizedBox(width: 4),
+                TextButton(
+                  onPressed: () {
+                    ref
+                        .read(homeControllerProvider.notifier)
+                        .getMovieListByType(type: MovieListType.popular);
+                  },
+                  child: Text(
+                    Strings.tryAgain,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      decoration: TextDecoration.underline,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+          loading: () {
+            return CircularProgressIndicator(color: theme.primaryColor);
+          },
         ),
         // Trending
         Row(
@@ -313,14 +371,48 @@ class _MoviesTabState extends ConsumerState<MoviesTab> {
             ),
           ],
         ),
-        SizedBox(
-          height: 300,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) => const Placeholder(),
-            separatorBuilder: (context, index) => const SizedBox(width: 6),
-            itemCount: 5,
-          ),
+        watch.trendingMovies.when(
+          data: (movies) {
+            return SizedBox(
+              height: 200,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) =>
+                    MoviePoster(movie: movies[index]),
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                itemCount: movies.length,
+              ),
+            );
+          },
+          error: (_, __) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  Strings.error,
+                  style: theme.textTheme.labelLarge,
+                ),
+                const SizedBox(width: 4),
+                TextButton(
+                  onPressed: () {
+                    ref
+                        .read(homeControllerProvider.notifier)
+                        .getMovieListByType(type: MovieListType.popular);
+                  },
+                  child: Text(
+                    Strings.tryAgain,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      decoration: TextDecoration.underline,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+          loading: () {
+            return CircularProgressIndicator(color: theme.primaryColor);
+          },
         ),
         // Upcoming
         Row(
@@ -333,14 +425,48 @@ class _MoviesTabState extends ConsumerState<MoviesTab> {
             ),
           ],
         ),
-        SizedBox(
-          height: 300,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) => const Placeholder(),
-            separatorBuilder: (context, index) => const SizedBox(width: 6),
-            itemCount: 5,
-          ),
+        watch.upcomingMovies.when(
+          data: (movies) {
+            return SizedBox(
+              height: 200,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) =>
+                    MoviePoster(movie: movies[index]),
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                itemCount: movies.length,
+              ),
+            );
+          },
+          error: (_, __) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  Strings.error,
+                  style: theme.textTheme.labelLarge,
+                ),
+                const SizedBox(width: 4),
+                TextButton(
+                  onPressed: () {
+                    ref
+                        .read(homeControllerProvider.notifier)
+                        .getMovieListByType(type: MovieListType.popular);
+                  },
+                  child: Text(
+                    Strings.tryAgain,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      decoration: TextDecoration.underline,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+          loading: () {
+            return CircularProgressIndicator(color: theme.primaryColor);
+          },
         ),
       ],
     );

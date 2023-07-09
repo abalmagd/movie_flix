@@ -4,10 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:movie_flix/shared/presentation/theme_icon_button.dart';
 
-import '../../utils/assets.dart';
 import '../../config/constants.dart';
 import '../../config/riverpod/config_controller.dart';
 import '../../config/theme/palette.dart';
+import '../../utils/assets.dart';
 import 'frosted_container.dart';
 
 class PrimarySliverAppBar extends ConsumerWidget {
@@ -74,7 +74,6 @@ class PrimarySliverAppBar extends ConsumerWidget {
         FrostedContainer(
           tightPadding: true,
           child: ThemeIconButton(
-            onPressed: () => call.changeThemeMode(context),
             color: inverseColors ? theme.iconTheme.color : Palette.white,
           ),
         ),

@@ -9,6 +9,7 @@ class CustomTheme {
     final size = MediaQuery.of(context).size;
     return ThemeData(
       useMaterial3: true,
+      primaryColor: Palette.red500,
       colorScheme: ColorScheme.fromSwatch(
         primarySwatch: MaterialColor(
           Palette.red500.value,
@@ -58,6 +59,7 @@ class CustomTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           textStyle: theme.textTheme.titleSmall,
+          visualDensity: VisualDensity.compact,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -79,6 +81,7 @@ class CustomTheme {
     final size = MediaQuery.of(context).size;
     return ThemeData(
       useMaterial3: true,
+      primaryColor: Palette.blue500,
       colorScheme: ColorScheme.fromSwatch(
         primarySwatch: MaterialColor(
           Palette.blue500.value,
@@ -129,6 +132,7 @@ class CustomTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           textStyle: theme.textTheme.titleSmall,
+          visualDensity: VisualDensity.compact,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),

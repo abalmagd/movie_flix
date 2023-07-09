@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +6,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 
 import '../config/theme/palette.dart';
+
+enum ToastSeverity { danger, ok, neutral }
 
 class Utils {
   static void logPrint({
@@ -48,6 +50,11 @@ class Utils {
       fontSize: 16.0,
     );
   }
-}
 
-enum ToastSeverity { danger, ok, neutral }
+  static Color randomColor() {
+    const pool = Colors.primaries;
+    final color = Color(pool[Random().nextInt(pool.length)].value);
+
+    return color;
+  }
+}
