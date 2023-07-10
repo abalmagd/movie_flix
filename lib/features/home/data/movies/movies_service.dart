@@ -1,38 +1,38 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../shared/domain/failure.dart';
-import '../../../shared/domain/movie.dart';
-import '../domain/genre.dart';
-import 'home_repository.dart';
+import '../../../../shared/domain/failure.dart';
+import '../../../../shared/domain/movie.dart';
+import '../../domain/genre.dart';
+import 'movies_repository.dart';
 
-abstract class BaseHomeService {
-  Future<Either<Failure, List<Movie>>> getPopularMovies();
+abstract class BaseMoviesService {
+  Future<Either<Failure, List<Movie>>> getPopular();
 
-  Future<Either<Failure, List<Movie>>> getTopRatedMovies();
+  Future<Either<Failure, List<Movie>>> getTopRated();
 
-  Future<Either<Failure, List<Movie>>> getTrendingMovies();
+  Future<Either<Failure, List<Movie>>> getTrending();
 
-  Future<Either<Failure, List<Movie>>> getNowPlayingMovies();
+  Future<Either<Failure, List<Movie>>> getNowPlaying();
 
-  Future<Either<Failure, List<Movie>>> getUpcomingMovies();
+  Future<Either<Failure, List<Movie>>> getUpcoming();
 
-  Future<Either<Failure, List<Genre>>> getMovieGenres();
+  Future<Either<Failure, List<Genre>>> getGenres();
 }
 
-final baseHomeServiceProvider = Provider<BaseHomeService>((ref) {
-  return HomeService(ref.watch(baseHomeRepositoryProvider));
+final baseMoviesServiceProvider = Provider<BaseMoviesService>((ref) {
+  return MoviesService(ref.watch(baseMoviesRepositoryProvider));
 });
 
-class HomeService implements BaseHomeService {
-  HomeService(this._baseHomeRepository);
+class MoviesService implements BaseMoviesService {
+  MoviesService(this._baseMoviesRepository);
 
-  final BaseHomeRepository _baseHomeRepository;
+  final BaseMoviesRepository _baseMoviesRepository;
 
   @override
-  Future<Either<Failure, List<Genre>>> getMovieGenres() async {
+  Future<Either<Failure, List<Genre>>> getGenres() async {
     try {
-      final json = await _baseHomeRepository.getMovieGenres();
+      final json = await _baseMoviesRepository.getGenres();
 
       final results = json['genres'] as List;
 
@@ -45,9 +45,9 @@ class HomeService implements BaseHomeService {
   }
 
   @override
-  Future<Either<Failure, List<Movie>>> getPopularMovies() async {
+  Future<Either<Failure, List<Movie>>> getPopular() async {
     try {
-      final json = await _baseHomeRepository.getPopularMovies();
+      final json = await _baseMoviesRepository.getPopular();
 
       final results = List<Map<String, dynamic>>.from(json['results']);
 
@@ -60,9 +60,9 @@ class HomeService implements BaseHomeService {
   }
 
   @override
-  Future<Either<Failure, List<Movie>>> getTopRatedMovies() async {
+  Future<Either<Failure, List<Movie>>> getTopRated() async {
     try {
-      final json = await _baseHomeRepository.getTopRatedMovies();
+      final json = await _baseMoviesRepository.getTopRated();
 
       final results = List<Map<String, dynamic>>.from(json['results']);
 
@@ -75,9 +75,9 @@ class HomeService implements BaseHomeService {
   }
 
   @override
-  Future<Either<Failure, List<Movie>>> getTrendingMovies() async {
+  Future<Either<Failure, List<Movie>>> getTrending() async {
     try {
-      final json = await _baseHomeRepository.getTrendingMovies();
+      final json = await _baseMoviesRepository.getTrending();
 
       final results = List<Map<String, dynamic>>.from(json['results']);
 
@@ -90,9 +90,9 @@ class HomeService implements BaseHomeService {
   }
 
   @override
-  Future<Either<Failure, List<Movie>>> getNowPlayingMovies() async {
+  Future<Either<Failure, List<Movie>>> getNowPlaying() async {
     try {
-      final json = await _baseHomeRepository.getNowPlayingMovies();
+      final json = await _baseMoviesRepository.getNowPlaying();
 
       final results = List<Map<String, dynamic>>.from(json['results']);
 
@@ -105,9 +105,9 @@ class HomeService implements BaseHomeService {
   }
 
   @override
-  Future<Either<Failure, List<Movie>>> getUpcomingMovies() async {
+  Future<Either<Failure, List<Movie>>> getUpcoming() async {
     try {
-      final json = await _baseHomeRepository.getUpcomingMovies();
+      final json = await _baseMoviesRepository.getUpcoming();
 
       final results = List<Map<String, dynamic>>.from(json['results']);
 

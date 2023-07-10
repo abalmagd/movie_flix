@@ -1,35 +1,35 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../shared/data/dio.dart';
-import '../../../shared/data/environment_variables.dart';
-import '../../../shared/domain/failure.dart';
+import '../../../../shared/data/dio.dart';
+import '../../../../shared/data/environment_variables.dart';
+import '../../../../shared/domain/failure.dart';
 
-abstract class BaseHomeRepository {
-  Future<Map<String, dynamic>> getPopularMovies();
+abstract class BaseMoviesRepository {
+  Future<Map<String, dynamic>> getPopular();
 
-  Future<Map<String, dynamic>> getTopRatedMovies();
+  Future<Map<String, dynamic>> getTopRated();
 
-  Future<Map<String, dynamic>> getTrendingMovies();
+  Future<Map<String, dynamic>> getTrending();
 
-  Future<Map<String, dynamic>> getNowPlayingMovies();
+  Future<Map<String, dynamic>> getNowPlaying();
 
-  Future<Map<String, dynamic>> getUpcomingMovies();
+  Future<Map<String, dynamic>> getUpcoming();
 
-  Future<Map<String, dynamic>> getMovieGenres();
+  Future<Map<String, dynamic>> getGenres();
 }
 
-final baseHomeRepositoryProvider = Provider<BaseHomeRepository>((ref) {
-  return HomeRepository(ref.watch(dioProvider));
+final baseMoviesRepositoryProvider = Provider<BaseMoviesRepository>((ref) {
+  return MoviesRepository(ref.watch(dioProvider));
 });
 
-class HomeRepository implements BaseHomeRepository {
-  HomeRepository(this._dio);
+class MoviesRepository implements BaseMoviesRepository {
+  MoviesRepository(this._dio);
 
   final Dio _dio;
 
   @override
-  Future<Map<String, dynamic>> getMovieGenres() async {
+  Future<Map<String, dynamic>> getGenres() async {
     try {
       final result = await _dio.get(RemoteEnvironment.movieGenres);
 
@@ -41,7 +41,7 @@ class HomeRepository implements BaseHomeRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> getPopularMovies() async {
+  Future<Map<String, dynamic>> getPopular() async {
     try {
       final result = await _dio.get(RemoteEnvironment.popularMovies);
 
@@ -53,7 +53,7 @@ class HomeRepository implements BaseHomeRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> getTopRatedMovies() async {
+  Future<Map<String, dynamic>> getTopRated() async {
     try {
       final result = await _dio.get(RemoteEnvironment.topRatedMovies);
 
@@ -65,7 +65,7 @@ class HomeRepository implements BaseHomeRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> getTrendingMovies() async {
+  Future<Map<String, dynamic>> getTrending() async {
     try {
       final result = await _dio.get(RemoteEnvironment.trendingMovies);
 
@@ -77,7 +77,7 @@ class HomeRepository implements BaseHomeRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> getUpcomingMovies() async {
+  Future<Map<String, dynamic>> getUpcoming() async {
     try {
       final result = await _dio.get(RemoteEnvironment.upcomingMovies);
 
@@ -89,7 +89,7 @@ class HomeRepository implements BaseHomeRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> getNowPlayingMovies() async {
+  Future<Map<String, dynamic>> getNowPlaying() async {
     try {
       final result = await _dio.get(RemoteEnvironment.nowPlayingMovies);
 

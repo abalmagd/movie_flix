@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:movie_flix/features/home/presentation/riverpod/home_controller.dart';
+import 'package:movie_flix/features/home/presentation/riverpod/movies/movies_controller.dart';
 import 'package:movie_flix/shared/data/environment_variables.dart';
 import 'package:movie_flix/shared/presentation/frosted_container.dart';
 
@@ -18,12 +18,11 @@ class MoviePoster extends ConsumerStatefulWidget {
 
 class _MoviePosterState extends ConsumerState<MoviePoster> {
   bool showInfo = false;
-  int t = 0;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final watch = ref.watch(homeControllerProvider);
+    final watch = ref.watch(moviesControllerProvider);
     return AspectRatio(
       aspectRatio: 2 / 3,
       child: ClipRRect(
@@ -35,11 +34,8 @@ class _MoviePosterState extends ConsumerState<MoviePoster> {
           child: Stack(
             children: [
               Image.network(
-                '${RemoteEnvironment.tmdbImage}${RemoteEnvironment.posterQuality}${widget.movie.posterPath}?t=$t',
+                '${RemoteEnvironment.tmdbImage}${RemoteEnvironment.posterQuality}${widget.movie.posterPath}',
                 errorBuilder: (_, __, ___) {
-                  setState(() {
-                    t++;
-                  });
                   return const Text('error');
                 },
                 width: double.infinity,
@@ -81,10 +77,7 @@ class _MoviePosterState extends ConsumerState<MoviePoster> {
                                     children: widget.movie.genresIds
                                         .map(
                                           (id) => Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                              vertical: 4,
-                                            ),
+                                            padding: const EdgeInsets.all(4),
                                             decoration: BoxDecoration(
                                               color: Palette.white
                                                   .withOpacity(0.24),
@@ -94,7 +87,7 @@ class _MoviePosterState extends ConsumerState<MoviePoster> {
                                               borderRadius:
                                                   BorderRadius.circular(20),
                                             ),
-                                            child: watch.movieGenres.when(
+                                            child: watch.genres.when(
                                               data: (genres) {
                                                 return Text(
                                                   genres

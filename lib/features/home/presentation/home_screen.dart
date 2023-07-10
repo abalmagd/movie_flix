@@ -1,7 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:movie_flix/features/home/presentation/riverpod/home_controller.dart';
+import 'package:movie_flix/features/home/presentation/riverpod/movies/movies_controller.dart';
+import 'package:movie_flix/features/home/presentation/shimmer_placeholders/media_poster_shimmer.dart';
 import 'package:movie_flix/features/home/presentation/widgets/sliver_delegates.dart';
 import 'package:movie_flix/shared/data/environment_variables.dart';
 import 'package:movie_flix/shared/presentation/drawer/primary_drawer.dart';
@@ -26,28 +27,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     const SeriesTab(),
     const ActorsTab(),
   ];
+  late final CarouselController _textCarouselController;
+  late final CarouselController _backdropCarouselController;
 
   @override
   void initState() {
     super.initState();
     Future(() {
-      ref.read(homeControllerProvider.notifier)
-        ..getMovieGenres()
-        ..getNowPlayingMovies()
-        ..getPopularMovies()
-        ..getTopRatedMovies()
-        ..getTrendingMovies()
-        ..getUpcomingMovies();
+      ref.read(moviesControllerProvider.notifier)
+        ..getGenres()
+        ..getNowPlaying()
+        ..getPopular()
+        ..getTopRated()
+        ..getTrending()
+        ..getUpcoming();
     });
+    _textCarouselController = CarouselController();
+    _backdropCarouselController = CarouselController();
   }
-
-  final CarouselController _textCarouselController = CarouselController();
-  final CarouselController _backdropCarouselController = CarouselController();
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final watch = ref.watch(homeControllerProvider);
+    final watch = ref.watch(moviesControllerProvider);
     return Scaffold(
       drawer: const PrimaryDrawer(),
       body: DefaultTabController(
@@ -55,7 +57,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
-              watch.nowPlayingMovies.when(
+              watch.nowPlaying.when(
                 data: (movies) {
                   return PrimarySliverAppBar(
                     collapsedTitle: FrostedContainer(
@@ -69,14 +71,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       carouselController: _textCarouselController,
                       options: CarouselOptions(
                         autoPlay: true,
-                        autoPlayAnimationDuration: const Duration(seconds: 1),
-                        autoPlayCurve: Curves.fastOutSlowIn,
+                        autoPlayAnimationDuration: const Duration(seconds: 2),
+                        autoPlayInterval: const Duration(seconds: 10),
+                        autoPlayCurve: Curves.ease,
                         viewportFraction: 1,
                         onPageChanged: (index, reason) {
                           _backdropCarouselController.animateToPage(
                             index,
-                            curve: Curves.fastOutSlowIn,
-                            duration: const Duration(seconds: 1),
+                            curve: Curves.ease,
+                            duration: const Duration(milliseconds: 1500),
                           );
                         },
                       ),
@@ -157,8 +160,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           TextButton(
                             onPressed: () {
                               ref
-                                  .read(homeControllerProvider.notifier)
-                                  .getNowPlayingMovies();
+                                  .read(moviesControllerProvider.notifier)
+                                  .getNowPlaying();
                             },
                             style: theme.textButtonTheme.style?.copyWith(
                                 visualDensity: VisualDensity.compact,
@@ -211,12 +214,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           body: TabBarView(
             children: tabs
                 .map(
-                  (e) => SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 12,
-                    ),
-                    child: e,
+                  (tab) => SingleChildScrollView(
+                    padding: const EdgeInsets.all(12),
+                    child: tab,
                   ),
                 )
                 .toList(),
@@ -233,9 +233,9 @@ class MoviesTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final call = ref.read(homeControllerProvider.notifier);
-    final watch = ref.watch(homeControllerProvider);
     final theme = Theme.of(context);
-    // final read = ref.read(homeControllerProvider);
+    final read = ref.read(moviesControllerProvider);
+    final watch = ref.watch(moviesControllerProvider);
     return Column(
       children: [
         // Popular
@@ -249,7 +249,7 @@ class MoviesTab extends ConsumerWidget {
             ),
           ],
         ),
-        watch.popularMovies.when(
+        read.popular.when(
           data: (movies) {
             return SizedBox(
               height: 200,
@@ -273,9 +273,7 @@ class MoviesTab extends ConsumerWidget {
                 const SizedBox(width: 4),
                 TextButton(
                   onPressed: () {
-                    ref
-                        .read(homeControllerProvider.notifier)
-                        .getPopularMovies();
+                    ref.read(moviesControllerProvider.notifier).getPopular();
                   },
                   child: Text(
                     Strings.tryAgain,
@@ -289,7 +287,7 @@ class MoviesTab extends ConsumerWidget {
             );
           },
           loading: () {
-            return CircularProgressIndicator(color: theme.primaryColor);
+            return const SizedBox(height: 200, child: MediaPosterShimmer());
           },
         ),
         // Top Rated
@@ -303,7 +301,7 @@ class MoviesTab extends ConsumerWidget {
             ),
           ],
         ),
-        watch.topRatedMovies.when(
+        read.topRated.when(
           data: (movies) {
             return SizedBox(
               height: 200,
@@ -327,9 +325,7 @@ class MoviesTab extends ConsumerWidget {
                 const SizedBox(width: 4),
                 TextButton(
                   onPressed: () {
-                    ref
-                        .read(homeControllerProvider.notifier)
-                        .getPopularMovies();
+                    ref.read(moviesControllerProvider.notifier).getPopular();
                   },
                   child: Text(
                     Strings.tryAgain,
@@ -343,7 +339,7 @@ class MoviesTab extends ConsumerWidget {
             );
           },
           loading: () {
-            return CircularProgressIndicator(color: theme.primaryColor);
+            return const SizedBox(height: 200, child: MediaPosterShimmer());
           },
         ),
         // Trending
@@ -357,7 +353,7 @@ class MoviesTab extends ConsumerWidget {
             ),
           ],
         ),
-        watch.trendingMovies.when(
+        read.trending.when(
           data: (movies) {
             return SizedBox(
               height: 200,
@@ -381,9 +377,7 @@ class MoviesTab extends ConsumerWidget {
                 const SizedBox(width: 4),
                 TextButton(
                   onPressed: () {
-                    ref
-                        .read(homeControllerProvider.notifier)
-                        .getPopularMovies();
+                    ref.read(moviesControllerProvider.notifier).getPopular();
                   },
                   child: Text(
                     Strings.tryAgain,
@@ -397,7 +391,7 @@ class MoviesTab extends ConsumerWidget {
             );
           },
           loading: () {
-            return CircularProgressIndicator(color: theme.primaryColor);
+            return const SizedBox(height: 200, child: MediaPosterShimmer());
           },
         ),
         // Upcoming
@@ -411,7 +405,7 @@ class MoviesTab extends ConsumerWidget {
             ),
           ],
         ),
-        watch.upcomingMovies.when(
+        read.upcoming.when(
           data: (movies) {
             return SizedBox(
               height: 200,
@@ -435,9 +429,7 @@ class MoviesTab extends ConsumerWidget {
                 const SizedBox(width: 4),
                 TextButton(
                   onPressed: () {
-                    ref
-                        .read(homeControllerProvider.notifier)
-                        .getPopularMovies();
+                    ref.read(moviesControllerProvider.notifier).getPopular();
                   },
                   child: Text(
                     Strings.tryAgain,
@@ -451,7 +443,7 @@ class MoviesTab extends ConsumerWidget {
             );
           },
           loading: () {
-            return CircularProgressIndicator(color: theme.primaryColor);
+            return const SizedBox(height: 200, child: MediaPosterShimmer());
           },
         ),
       ],

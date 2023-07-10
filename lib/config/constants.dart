@@ -11,4 +11,5 @@ class Constants {
   static const redirectBottomSheetHeightFactor = 0.5; // 50% of screen height
   static const sliverAppBarMaxHeightFactor = 0.30; // 25%
   static const defaultSvgColor = '#6c63ff';
+  static const mediaPosterCornerRadius = 12.0;
 }
