@@ -2,11 +2,12 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/features/home/presentation/riverpod/movies/movies_controller.dart';
+import 'package:movie_flix/features/home/presentation/riverpod/series/series_controller.dart';
 import 'package:movie_flix/features/home/presentation/shimmer_placeholders/media_poster_shimmer.dart';
+import 'package:movie_flix/features/home/presentation/widgets/media_poster.dart';
 import 'package:movie_flix/features/home/presentation/widgets/sliver_delegates.dart';
 import 'package:movie_flix/shared/data/environment_variables.dart';
 import 'package:movie_flix/shared/presentation/drawer/primary_drawer.dart';
-import 'package:movie_flix/shared/presentation/movie_poster.dart';
 import 'package:movie_flix/shared/presentation/primary_sliver_appbar.dart';
 import 'package:movie_flix/utils/strings.dart';
 
@@ -41,6 +42,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ..getTopRated()
         ..getTrending()
         ..getUpcoming();
+
+      ref.read(seriesControllerProvider.notifier)
+        ..getGenres()
+        ..getPopular()
+        ..getTopRated()
+        ..getTrending();
     });
     _textCarouselController = CarouselController();
     _backdropCarouselController = CarouselController();
@@ -232,23 +239,12 @@ class MoviesTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final call = ref.read(homeControllerProvider.notifier);
-    final theme = Theme.of(context);
+    final call = ref.read(moviesControllerProvider.notifier);
     final read = ref.read(moviesControllerProvider);
-    final watch = ref.watch(moviesControllerProvider);
     return Column(
       children: [
         // Popular
-        Row(
-          children: [
-            const Text(Strings.popular),
-            const Spacer(),
-            TextButton(
-              onPressed: () {},
-              child: const Text(Strings.viewAll),
-            ),
-          ],
-        ),
+        ViewAll(title: Strings.popular, onPressed: () {}),
         read.popular.when(
           data: (movies) {
             return SizedBox(
@@ -256,51 +252,21 @@ class MoviesTab extends ConsumerWidget {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) =>
-                    MoviePoster(movie: movies[index]),
+                    MediaPoster(media: movies[index]),
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemCount: movies.length,
               ),
             );
           },
           error: (_, __) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  Strings.error,
-                  style: theme.textTheme.labelLarge,
-                ),
-                const SizedBox(width: 4),
-                TextButton(
-                  onPressed: () {
-                    ref.read(moviesControllerProvider.notifier).getPopular();
-                  },
-                  child: Text(
-                    Strings.tryAgain,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      decoration: TextDecoration.underline,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                ),
-              ],
-            );
+            return ErrorText(onRetry: () => call.getPopular());
           },
           loading: () {
             return const SizedBox(height: 200, child: MediaPosterShimmer());
           },
         ),
         // Top Rated
-        Row(
-          children: [
-            const Text(Strings.topRated),
-            const Spacer(),
-            TextButton(
-              onPressed: () {},
-              child: const Text(Strings.viewAll),
-            ),
-          ],
-        ),
+        ViewAll(title: Strings.topRated, onPressed: () {}),
         read.topRated.when(
           data: (movies) {
             return SizedBox(
@@ -308,51 +274,21 @@ class MoviesTab extends ConsumerWidget {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) =>
-                    MoviePoster(movie: movies[index]),
+                    MediaPoster(media: movies[index]),
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemCount: movies.length,
               ),
             );
           },
           error: (_, __) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  Strings.error,
-                  style: theme.textTheme.labelLarge,
-                ),
-                const SizedBox(width: 4),
-                TextButton(
-                  onPressed: () {
-                    ref.read(moviesControllerProvider.notifier).getPopular();
-                  },
-                  child: Text(
-                    Strings.tryAgain,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      decoration: TextDecoration.underline,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                ),
-              ],
-            );
+            return ErrorText(onRetry: () => call.getTopRated());
           },
           loading: () {
             return const SizedBox(height: 200, child: MediaPosterShimmer());
           },
         ),
         // Trending
-        Row(
-          children: [
-            const Text(Strings.trending),
-            const Spacer(),
-            TextButton(
-              onPressed: () {},
-              child: const Text(Strings.viewAll),
-            ),
-          ],
-        ),
+        ViewAll(title: Strings.trending, onPressed: () {}),
         read.trending.when(
           data: (movies) {
             return SizedBox(
@@ -360,51 +296,21 @@ class MoviesTab extends ConsumerWidget {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) =>
-                    MoviePoster(movie: movies[index]),
+                    MediaPoster(media: movies[index]),
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemCount: movies.length,
               ),
             );
           },
           error: (_, __) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  Strings.error,
-                  style: theme.textTheme.labelLarge,
-                ),
-                const SizedBox(width: 4),
-                TextButton(
-                  onPressed: () {
-                    ref.read(moviesControllerProvider.notifier).getPopular();
-                  },
-                  child: Text(
-                    Strings.tryAgain,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      decoration: TextDecoration.underline,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                ),
-              ],
-            );
+            return ErrorText(onRetry: () => call.getTrending());
           },
           loading: () {
             return const SizedBox(height: 200, child: MediaPosterShimmer());
           },
         ),
         // Upcoming
-        Row(
-          children: [
-            const Text(Strings.upcoming),
-            const Spacer(),
-            TextButton(
-              onPressed: () {},
-              child: const Text(Strings.viewAll),
-            ),
-          ],
-        ),
+        ViewAll(title: Strings.upcoming, onPressed: () {}),
         read.upcoming.when(
           data: (movies) {
             return SizedBox(
@@ -412,35 +318,14 @@ class MoviesTab extends ConsumerWidget {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) =>
-                    MoviePoster(movie: movies[index]),
+                    MediaPoster(media: movies[index]),
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemCount: movies.length,
               ),
             );
           },
           error: (_, __) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  Strings.error,
-                  style: theme.textTheme.labelLarge,
-                ),
-                const SizedBox(width: 4),
-                TextButton(
-                  onPressed: () {
-                    ref.read(moviesControllerProvider.notifier).getPopular();
-                  },
-                  child: Text(
-                    Strings.tryAgain,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      decoration: TextDecoration.underline,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                ),
-              ],
-            );
+            return ErrorText(onRetry: () => call.getUpcoming());
           },
           loading: () {
             return const SizedBox(height: 200, child: MediaPosterShimmer());
@@ -451,12 +336,84 @@ class MoviesTab extends ConsumerWidget {
   }
 }
 
-class SeriesTab extends StatelessWidget {
+class SeriesTab extends ConsumerWidget {
   const SeriesTab({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final call = ref.read(seriesControllerProvider.notifier);
+    final read = ref.read(seriesControllerProvider);
+    // final watch = ref.watch(seriesControllerProvider);
+    return Column(
+      children: [
+        // Popular
+        ViewAll(title: Strings.popular, onPressed: () {}),
+        read.popular.when(
+          data: (series) {
+            return SizedBox(
+              height: 200,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) =>
+                    MediaPoster(media: series[index]),
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                itemCount: series.length,
+              ),
+            );
+          },
+          error: (_, __) {
+            return ErrorText(onRetry: () => call.getPopular());
+          },
+          loading: () {
+            return const SizedBox(height: 200, child: MediaPosterShimmer());
+          },
+        ),
+        // Top Rated
+        ViewAll(title: Strings.topRated, onPressed: () {}),
+        read.topRated.when(
+          data: (series) {
+            return SizedBox(
+              height: 200,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) =>
+                    MediaPoster(media: series[index]),
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                itemCount: series.length,
+              ),
+            );
+          },
+          error: (_, __) {
+            return ErrorText(onRetry: () => call.getTopRated());
+          },
+          loading: () {
+            return const SizedBox(height: 200, child: MediaPosterShimmer());
+          },
+        ),
+        // Trending
+        ViewAll(title: Strings.trending, onPressed: () {}),
+        read.trending.when(
+          data: (series) {
+            return SizedBox(
+              height: 200,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) =>
+                    MediaPoster(media: series[index]),
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                itemCount: series.length,
+              ),
+            );
+          },
+          error: (_, __) {
+            return ErrorText(onRetry: () => call.getTrending());
+          },
+          loading: () {
+            return const SizedBox(height: 200, child: MediaPosterShimmer());
+          },
+        ),
+      ],
+    );
   }
 }
 
@@ -466,5 +423,57 @@ class ActorsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Placeholder();
+  }
+}
+
+class ErrorText extends StatelessWidget {
+  const ErrorText({super.key, required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          Strings.error,
+          style: theme.textTheme.labelLarge,
+        ),
+        const SizedBox(width: 4),
+        TextButton(
+          onPressed: onRetry,
+          child: Text(
+            Strings.tryAgain,
+            style: theme.textTheme.labelLarge?.copyWith(
+              decoration: TextDecoration.underline,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ViewAll extends StatelessWidget {
+  const ViewAll({super.key, required this.title, required this.onPressed});
+
+  final String title;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(title),
+        const Spacer(),
+        TextButton(
+          onPressed: onPressed,
+          child: const Text(Strings.viewAll),
+        ),
+      ],
+    );
   }
 }

@@ -18,6 +18,8 @@ class RemoteEnvironment {
 
   static const account = '/account';
 
+  static const discover = '/discover';
+
   static const movie = '/movie';
   static const popularMovies = '$movie/popular';
   static const topRatedMovies = '$movie/top_rated';
@@ -25,6 +27,12 @@ class RemoteEnvironment {
   static const upcomingMovies = '$movie/upcoming';
   static const trendingMovies = '/trending/movie/day';
 
+  static const series = '/tv';
+  static const discoverSeries = '$discover$series';
+  static const topRatedSeries = '$series/top_rated';
+  static const trendingSeries = '/trending/$series/day';
+
   static const genre = '/genre';
   static const movieGenres = '$genre$movie/list';
+  static const seriesGenres = '$genre$series/list';
 }

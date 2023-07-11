@@ -1,28 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:movie_flix/features/home/presentation/riverpod/movies/movies_controller.dart';
+import 'package:movie_flix/features/home/presentation/riverpod/series/series_controller.dart';
 import 'package:movie_flix/shared/data/environment_variables.dart';
 import 'package:movie_flix/shared/presentation/frosted_container.dart';
 
-import '../../config/theme/palette.dart';
-import '../domain/movie.dart';
+import '../../../../config/theme/palette.dart';
+import '../../domain/media.dart';
 
-class MoviePoster extends ConsumerStatefulWidget {
-  const MoviePoster({Key? key, required this.movie}) : super(key: key);
+class MediaPoster extends ConsumerStatefulWidget {
+  const MediaPoster({
+    Key? key,
+    required this.media,
+    this.isSeries = false,
+  }) : super(key: key);
 
-  final Movie movie;
+  final Media media;
+  final bool isSeries;
 
   @override
-  ConsumerState<MoviePoster> createState() => _MoviePosterState();
+  ConsumerState<MediaPoster> createState() => _MoviePosterState();
 }
 
-class _MoviePosterState extends ConsumerState<MoviePoster> {
+class _MoviePosterState extends ConsumerState<MediaPoster> {
   bool showInfo = false;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final watch = ref.watch(moviesControllerProvider);
+    final read = ref.read(seriesControllerProvider);
     return AspectRatio(
       aspectRatio: 2 / 3,
       child: ClipRRect(
@@ -34,7 +39,7 @@ class _MoviePosterState extends ConsumerState<MoviePoster> {
           child: Stack(
             children: [
               Image.network(
-                '${RemoteEnvironment.tmdbImage}${RemoteEnvironment.posterQuality}${widget.movie.posterPath}',
+                '${RemoteEnvironment.tmdbImage}${RemoteEnvironment.posterQuality}${widget.media.posterPath}',
                 errorBuilder: (_, __, ___) {
                   return const Text('error');
                 },
@@ -59,7 +64,7 @@ class _MoviePosterState extends ConsumerState<MoviePoster> {
                           child: Column(
                             children: [
                               Text(
-                                widget.movie.title,
+                                widget.media.title,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
@@ -74,7 +79,7 @@ class _MoviePosterState extends ConsumerState<MoviePoster> {
                                     direction: Axis.horizontal,
                                     spacing: 4,
                                     runSpacing: 8,
-                                    children: widget.movie.genresIds
+                                    children: widget.media.genreIds
                                         .map(
                                           (id) => Container(
                                             padding: const EdgeInsets.all(4),
@@ -87,7 +92,7 @@ class _MoviePosterState extends ConsumerState<MoviePoster> {
                                               borderRadius:
                                                   BorderRadius.circular(20),
                                             ),
-                                            child: watch.genres.when(
+                                            child: read.genres.when(
                                               data: (genres) {
                                                 return Text(
                                                   genres
@@ -119,7 +124,7 @@ class _MoviePosterState extends ConsumerState<MoviePoster> {
                               Row(
                                 children: [
                                   Text(
-                                    '${widget.movie.releaseDate.year}',
+                                    '${widget.media.releaseDate.year}',
                                     style: theme.textTheme.bodyLarge?.copyWith(
                                       color: Palette.white,
                                     ),
@@ -131,7 +136,7 @@ class _MoviePosterState extends ConsumerState<MoviePoster> {
                                     size: 20,
                                   ),
                                   Text(
-                                    widget.movie.voteAverage.toStringAsFixed(1),
+                                    widget.media.voteAverage.toStringAsFixed(1),
                                     style: theme.textTheme.bodyLarge?.copyWith(
                                       color: Palette.white,
                                     ),

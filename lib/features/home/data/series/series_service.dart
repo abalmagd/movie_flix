@@ -4,35 +4,31 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/domain/failure.dart';
 import '../../domain/genre.dart';
 import '../../domain/media.dart';
-import 'movies_repository.dart';
+import 'series_repository.dart';
 
-abstract class BaseMoviesService {
+abstract class BaseSeriesService {
   Future<Either<Failure, List<Media>>> getPopular();
 
   Future<Either<Failure, List<Media>>> getTopRated();
 
   Future<Either<Failure, List<Media>>> getTrending();
 
-  Future<Either<Failure, List<Media>>> getNowPlaying();
-
-  Future<Either<Failure, List<Media>>> getUpcoming();
-
   Future<Either<Failure, List<Genre>>> getGenres();
 }
 
-final baseMoviesServiceProvider = Provider<BaseMoviesService>((ref) {
-  return MoviesService(ref.watch(baseMoviesRepositoryProvider));
+final baseSeriesServiceProvider = Provider<BaseSeriesService>((ref) {
+  return SeriesService(ref.watch(baseSeriesRepositoryProvider));
 });
 
-class MoviesService implements BaseMoviesService {
-  MoviesService(this._baseMoviesRepository);
+class SeriesService implements BaseSeriesService {
+  SeriesService(this._baseSeriesRepository);
 
-  final BaseMoviesRepository _baseMoviesRepository;
+  final BaseSeriesRepository _baseSeriesRepository;
 
   @override
   Future<Either<Failure, List<Genre>>> getGenres() async {
     try {
-      final json = await _baseMoviesRepository.getGenres();
+      final json = await _baseSeriesRepository.getGenres();
 
       final results = json['genres'] as List;
 
@@ -47,7 +43,7 @@ class MoviesService implements BaseMoviesService {
   @override
   Future<Either<Failure, List<Media>>> getPopular() async {
     try {
-      final json = await _baseMoviesRepository.getPopular();
+      final json = await _baseSeriesRepository.getPopular();
 
       final results = List<Map<String, dynamic>>.from(json['results']);
 
@@ -62,7 +58,7 @@ class MoviesService implements BaseMoviesService {
   @override
   Future<Either<Failure, List<Media>>> getTopRated() async {
     try {
-      final json = await _baseMoviesRepository.getTopRated();
+      final json = await _baseSeriesRepository.getTopRated();
 
       final results = List<Map<String, dynamic>>.from(json['results']);
 
@@ -77,37 +73,7 @@ class MoviesService implements BaseMoviesService {
   @override
   Future<Either<Failure, List<Media>>> getTrending() async {
     try {
-      final json = await _baseMoviesRepository.getTrending();
-
-      final results = List<Map<String, dynamic>>.from(json['results']);
-
-      final movies = results.map((e) => Media.fromJson(e)).toList();
-
-      return Right(movies);
-    } on Failure catch (failure) {
-      return Left(failure);
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<Media>>> getNowPlaying() async {
-    try {
-      final json = await _baseMoviesRepository.getNowPlaying();
-
-      final results = List<Map<String, dynamic>>.from(json['results']);
-
-      final movies = results.map((e) => Media.fromJson(e)).toList();
-
-      return Right(movies);
-    } on Failure catch (failure) {
-      return Left(failure);
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<Media>>> getUpcoming() async {
-    try {
-      final json = await _baseMoviesRepository.getUpcoming();
+      final json = await _baseSeriesRepository.getTrending();
 
       final results = List<Map<String, dynamic>>.from(json['results']);
 
