@@ -141,6 +141,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             '${RemoteEnvironment.tmdbImage}${RemoteEnvironment.backdropQuality}${movie.backdropPath}',
                             fit: BoxFit.cover,
                             width: double.infinity,
+                            filterQuality: FilterQuality.none,
                           );
                         },
                       ).toList(),
@@ -240,19 +241,21 @@ class MoviesTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final call = ref.read(moviesControllerProvider.notifier);
-    final read = ref.read(moviesControllerProvider);
+    final watch = ref.watch(moviesControllerProvider);
     return Column(
       children: [
         // Popular
         ViewAll(title: Strings.popular, onPressed: () {}),
-        read.popular.when(
+        watch.popular.when(
           data: (movies) {
             return SizedBox(
               height: 200,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) =>
-                    MediaPoster(media: movies[index]),
+                itemBuilder: (context, index) => MediaPoster(
+                  media: movies[index],
+                  state: watch,
+                ),
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemCount: movies.length,
               ),
@@ -267,14 +270,16 @@ class MoviesTab extends ConsumerWidget {
         ),
         // Top Rated
         ViewAll(title: Strings.topRated, onPressed: () {}),
-        read.topRated.when(
+        watch.topRated.when(
           data: (movies) {
             return SizedBox(
               height: 200,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) =>
-                    MediaPoster(media: movies[index]),
+                itemBuilder: (context, index) => MediaPoster(
+                  media: movies[index],
+                  state: watch,
+                ),
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemCount: movies.length,
               ),
@@ -289,14 +294,16 @@ class MoviesTab extends ConsumerWidget {
         ),
         // Trending
         ViewAll(title: Strings.trending, onPressed: () {}),
-        read.trending.when(
+        watch.trending.when(
           data: (movies) {
             return SizedBox(
               height: 200,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) =>
-                    MediaPoster(media: movies[index]),
+                itemBuilder: (context, index) => MediaPoster(
+                  media: movies[index],
+                  state: watch,
+                ),
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemCount: movies.length,
               ),
@@ -311,14 +318,16 @@ class MoviesTab extends ConsumerWidget {
         ),
         // Upcoming
         ViewAll(title: Strings.upcoming, onPressed: () {}),
-        read.upcoming.when(
+        watch.upcoming.when(
           data: (movies) {
             return SizedBox(
               height: 200,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) =>
-                    MediaPoster(media: movies[index]),
+                itemBuilder: (context, index) => MediaPoster(
+                  media: movies[index],
+                  state: watch,
+                ),
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemCount: movies.length,
               ),
@@ -342,20 +351,20 @@ class SeriesTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final call = ref.read(seriesControllerProvider.notifier);
-    final read = ref.read(seriesControllerProvider);
+    final watch = ref.watch(seriesControllerProvider);
     // final watch = ref.watch(seriesControllerProvider);
     return Column(
       children: [
         // Popular
         ViewAll(title: Strings.popular, onPressed: () {}),
-        read.popular.when(
+        watch.popular.when(
           data: (series) {
             return SizedBox(
               height: 200,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) =>
-                    MediaPoster(media: series[index]),
+                    MediaPoster(media: series[index], state: watch),
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemCount: series.length,
               ),
@@ -370,14 +379,14 @@ class SeriesTab extends ConsumerWidget {
         ),
         // Top Rated
         ViewAll(title: Strings.topRated, onPressed: () {}),
-        read.topRated.when(
+        watch.topRated.when(
           data: (series) {
             return SizedBox(
               height: 200,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) =>
-                    MediaPoster(media: series[index]),
+                    MediaPoster(media: series[index], state: watch),
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemCount: series.length,
               ),
@@ -392,14 +401,14 @@ class SeriesTab extends ConsumerWidget {
         ),
         // Trending
         ViewAll(title: Strings.trending, onPressed: () {}),
-        read.trending.when(
+        watch.trending.when(
           data: (series) {
             return SizedBox(
               height: 200,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) =>
-                    MediaPoster(media: series[index]),
+                    MediaPoster(media: series[index], state: watch),
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemCount: series.length,
               ),

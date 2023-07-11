@@ -2,18 +2,18 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../domain/genre.dart';
-import '../../../domain/media.dart';
+import '../../domain/genre.dart';
+import '../../domain/media.dart';
 
 @immutable
-class MoviesState extends Equatable {
-  const MoviesState({
-    required this.popular,
-    required this.topRated,
-    required this.trending,
-    required this.nowPlaying,
-    required this.upcoming,
-    required this.genres,
+class MediaState extends Equatable {
+  const MediaState({
+    this.popular = const AsyncData([]),
+    this.topRated = const AsyncData([]),
+    this.trending = const AsyncData([]),
+    this.nowPlaying = const AsyncData([]),
+    this.upcoming = const AsyncData([]),
+    this.genres = const AsyncData([]),
   });
 
   final AsyncValue<List<Media>> popular;
@@ -23,7 +23,7 @@ class MoviesState extends Equatable {
   final AsyncValue<List<Media>> upcoming;
   final AsyncValue<List<Genre>> genres;
 
-  MoviesState copyWith({
+  MediaState copyWith({
     AsyncValue<List<Media>>? popular,
     AsyncValue<List<Media>>? topRated,
     AsyncValue<List<Media>>? trending,
@@ -31,7 +31,7 @@ class MoviesState extends Equatable {
     AsyncValue<List<Media>>? upcoming,
     AsyncValue<List<Genre>>? genres,
   }) {
-    return MoviesState(
+    return MediaState(
       popular: popular ?? this.popular,
       topRated: topRated ?? this.topRated,
       trending: trending ?? this.trending,

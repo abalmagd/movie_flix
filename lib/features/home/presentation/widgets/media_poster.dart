@@ -1,33 +1,35 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:movie_flix/features/home/presentation/riverpod/series/series_controller.dart';
 import 'package:movie_flix/shared/data/environment_variables.dart';
 import 'package:movie_flix/shared/presentation/frosted_container.dart';
 
 import '../../../../config/theme/palette.dart';
 import '../../domain/media.dart';
+import '../riverpod/media_state.dart';
 
 class MediaPoster extends ConsumerStatefulWidget {
   const MediaPoster({
     Key? key,
     required this.media,
-    this.isSeries = false,
+    required this.state,
   }) : super(key: key);
 
   final Media media;
-  final bool isSeries;
+  final MediaState state;
 
   @override
   ConsumerState<MediaPoster> createState() => _MoviePosterState();
 }
 
 class _MoviePosterState extends ConsumerState<MediaPoster> {
+  int t = 0;
   bool showInfo = false;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final read = ref.read(seriesControllerProvider);
     return AspectRatio(
       aspectRatio: 2 / 3,
       child: ClipRRect(
@@ -39,11 +41,18 @@ class _MoviePosterState extends ConsumerState<MediaPoster> {
           child: Stack(
             children: [
               Image.network(
-                '${RemoteEnvironment.tmdbImage}${RemoteEnvironment.posterQuality}${widget.media.posterPath}',
+                '${RemoteEnvironment.tmdbImage}${RemoteEnvironment.posterQuality}${widget.media.posterPath}?t=$t',
                 errorBuilder: (_, __, ___) {
-                  return const Text('error');
+                  Timer(const Duration(seconds: 5), () {
+                    setState(() {
+                      t++;
+                    });
+                  });
+                  return const Text('Error loading this image!');
                 },
+                filterQuality: FilterQuality.none,
                 width: double.infinity,
+                height: double.infinity,
                 fit: BoxFit.cover,
               ),
               AnimatedOpacity(
@@ -74,7 +83,7 @@ class _MoviePosterState extends ConsumerState<MediaPoster> {
                               Expanded(
                                 child: SingleChildScrollView(
                                   padding:
-                                      const EdgeInsets.symmetric(vertical: 6),
+                                  const EdgeInsets.symmetric(vertical: 6),
                                   child: Wrap(
                                     direction: Axis.horizontal,
                                     spacing: 4,
@@ -82,17 +91,17 @@ class _MoviePosterState extends ConsumerState<MediaPoster> {
                                     children: widget.media.genreIds
                                         .map(
                                           (id) => Container(
-                                            padding: const EdgeInsets.all(4),
-                                            decoration: BoxDecoration(
-                                              color: Palette.white
-                                                  .withOpacity(0.24),
-                                              border: Border.all(
-                                                color: Palette.white,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: read.genres.when(
+                                        padding: const EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          color: Palette.white
+                                              .withOpacity(0.24),
+                                          border: Border.all(
+                                            color: Palette.white,
+                                          ),
+                                          borderRadius:
+                                          BorderRadius.circular(20),
+                                        ),
+                                        child: widget.state.genres.when(
                                               data: (genres) {
                                                 return Text(
                                                   genres
@@ -104,19 +113,19 @@ class _MoviePosterState extends ConsumerState<MediaPoster> {
                                                   style: theme
                                                       .textTheme.bodySmall
                                                       ?.copyWith(
-                                                    color: Palette.white,
-                                                  ),
-                                                );
-                                              },
-                                              error: (_, __) {
-                                                return const Text('failed');
-                                              },
-                                              loading: () {
-                                                return const CircularProgressIndicator();
-                                              },
-                                            ),
-                                          ),
-                                        )
+                                                color: Palette.white,
+                                              ),
+                                            );
+                                          },
+                                          error: (_, __) {
+                                            return const Text('failed');
+                                          },
+                                          loading: () {
+                                            return const CircularProgressIndicator();
+                                          },
+                                        ),
+                                      ),
+                                    )
                                         .toList(),
                                   ),
                                 ),

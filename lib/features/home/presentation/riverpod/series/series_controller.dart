@@ -4,26 +4,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/utils/utils.dart';
 
 import '../../../data/series/series_service.dart';
-import 'series_state.dart';
+import '../media_state.dart';
 
 final seriesControllerProvider =
-    NotifierProvider<SeriesController, SeriesState>(SeriesController.new);
+    NotifierProvider<SeriesController, MediaState>(SeriesController.new);
 
-class SeriesController extends Notifier<SeriesState> {
+class SeriesController extends Notifier<MediaState> {
   late final BaseSeriesService _seriesService;
 
   @override
-  SeriesState build() {
+  MediaState build() {
     Utils.logPrint(message: 'Building $runtimeType');
 
     _seriesService = ref.read(baseSeriesServiceProvider);
 
-    return const SeriesState(
-      popular: AsyncData([]),
-      topRated: AsyncData([]),
-      trending: AsyncData([]),
-      genres: AsyncData([]),
-    );
+    return const MediaState();
   }
 
   Future<void> getPopular({int page = 1}) async {

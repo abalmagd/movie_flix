@@ -5,30 +5,23 @@ import 'package:movie_flix/features/home/data/movies/movies_service.dart';
 import 'package:movie_flix/utils/utils.dart';
 
 import '../../../../../shared/data/local_storage.dart';
-import 'movies_state.dart';
+import '../media_state.dart';
 
 final moviesControllerProvider =
-    NotifierProvider<MoviesController, MoviesState>(MoviesController.new);
+    NotifierProvider<MoviesController, MediaState>(MoviesController.new);
 
-class MoviesController extends Notifier<MoviesState> {
+class MoviesController extends Notifier<MediaState> {
   late final SharedPrefs _sharedPrefs;
   late final BaseMoviesService _moviesService;
 
   @override
-  MoviesState build() {
+  MediaState build() {
     Utils.logPrint(message: 'Building $runtimeType');
 
     _sharedPrefs = ref.read(sharedPrefsProvider);
     _moviesService = ref.read(baseMoviesServiceProvider);
 
-    return const MoviesState(
-      popular: AsyncData([]),
-      topRated: AsyncData([]),
-      trending: AsyncData([]),
-      nowPlaying: AsyncData([]),
-      upcoming: AsyncData([]),
-      genres: AsyncData([]),
-    );
+    return const MediaState();
   }
 
   Future<void> getNowPlaying({int page = 1}) async {
