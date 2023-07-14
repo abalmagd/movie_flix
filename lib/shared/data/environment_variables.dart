@@ -35,4 +35,8 @@ class RemoteEnvironment {
   static const genre = '/genre';
   static const movieGenres = '$genre$movie/list';
   static const seriesGenres = '$genre$series/list';
+
+  static const person = '/person';
+  static const popularPersons = '$person/popular';
+  static const trendingPersons = '/trending/$person';
 }

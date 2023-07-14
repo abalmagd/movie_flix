@@ -6,13 +6,13 @@ import 'dart:convert';
 
 class Media {
   final bool adult;
-  final String backdropPath;
+  final String? backdropPath;
   final int id;
   final String title;
   final String originalLanguage;
   final String originalTitle;
   final String overview;
-  final String posterPath;
+  final String? posterPath;
   final String? mediaType;
   final List<int> genreIds;
   final double popularity;
@@ -56,7 +56,7 @@ class Media {
         genreIds: json['genre_ids'] == null
             ? List<int>.from(json['genres'].map((x) => x))
             : List<int>.from(json['genre_ids'].map((x) => x)),
-        popularity: json['popularity']?.toDouble(),
+        popularity: json['popularity']?.toDouble() ?? 0.0,
         releaseDate:
             DateTime.parse(json['release_date'] ?? json['first_air_date']),
         video: json['video'] ?? false,

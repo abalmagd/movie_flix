@@ -12,7 +12,9 @@ class Strings {
   static const viewAll = 'View All';
   static const movies = 'Movies';
   static const series = 'Series';
-  static const actors = 'Actors';
+  static const people = 'People';
+  static const knownFor = 'Known for';
+  static const explore = 'Explore';
   static const logout = 'Logout';
   static const guestSession = 'Guest Session';
   static const userSession = 'User Session';

@@ -1,10 +1,13 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:movie_flix/config/constants.dart';
 import 'package:movie_flix/features/home/presentation/riverpod/movies/movies_controller.dart';
+import 'package:movie_flix/features/home/presentation/riverpod/persons/persons_controller.dart';
 import 'package:movie_flix/features/home/presentation/riverpod/series/series_controller.dart';
 import 'package:movie_flix/features/home/presentation/shimmer_placeholders/media_poster_shimmer.dart';
 import 'package:movie_flix/features/home/presentation/widgets/media_poster.dart';
+import 'package:movie_flix/features/home/presentation/widgets/person_poster.dart';
 import 'package:movie_flix/features/home/presentation/widgets/sliver_delegates.dart';
 import 'package:movie_flix/shared/data/environment_variables.dart';
 import 'package:movie_flix/shared/presentation/drawer/primary_drawer.dart';
@@ -26,7 +29,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   final List<Widget> tabs = [
     const MoviesTab(),
     const SeriesTab(),
-    const ActorsTab(),
+    const PeopleTab(),
   ];
   late final CarouselController _textCarouselController;
   late final CarouselController _backdropCarouselController;
@@ -47,6 +50,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ..getGenres()
         ..getPopular()
         ..getTopRated()
+        ..getTrending();
+
+      ref.read(personsControllerProvider.notifier)
+        ..getPopular()
         ..getTrending();
     });
     _textCarouselController = CarouselController();
@@ -210,7 +217,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                       Tab(
                         icon: Icon(Icons.person_pin_outlined),
-                        text: Strings.actors,
+                        text: Strings.people,
                       ),
                     ],
                   ),
@@ -220,14 +227,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ];
           },
           body: TabBarView(
-            children: tabs
-                .map(
-                  (tab) => SingleChildScrollView(
-                    padding: const EdgeInsets.all(12),
-                    child: tab,
-                  ),
-                )
-                .toList(),
+            children: tabs.map((tab) => tab).toList(),
           ),
         ),
       ),
@@ -242,7 +242,8 @@ class MoviesTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final call = ref.read(moviesControllerProvider.notifier);
     final watch = ref.watch(moviesControllerProvider);
-    return Column(
+    return ListView(
+      padding: const EdgeInsets.all(12),
       children: [
         // Popular
         ViewAll(title: Strings.popular, onPressed: () {}),
@@ -353,7 +354,8 @@ class SeriesTab extends ConsumerWidget {
     final call = ref.read(seriesControllerProvider.notifier);
     final watch = ref.watch(seriesControllerProvider);
     // final watch = ref.watch(seriesControllerProvider);
-    return Column(
+    return ListView(
+      padding: const EdgeInsets.all(12),
       children: [
         // Popular
         ViewAll(title: Strings.popular, onPressed: () {}),
@@ -426,12 +428,70 @@ class SeriesTab extends ConsumerWidget {
   }
 }
 
-class ActorsTab extends StatelessWidget {
-  const ActorsTab({Key? key}) : super(key: key);
+class PeopleTab extends ConsumerWidget {
+  const PeopleTab({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final call = ref.read(personsControllerProvider.notifier);
+    final watch = ref.watch(personsControllerProvider);
+    return ListView(
+      padding: const EdgeInsets.all(12),
+      children: [
+        // Popular
+        ViewAll(title: Strings.popular, onPressed: () {}),
+        watch.popular.when(
+          data: (persons) {
+            return SizedBox(
+              height: 400,
+              child: GridView.builder(
+                scrollDirection: Axis.horizontal,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: Constants.peopleGridCrossAxisCount,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 3 / 2),
+                itemBuilder: (context, index) =>
+                    PersonPoster(person: persons[index]),
+                itemCount: persons.length,
+              ),
+            );
+          },
+          error: (_, __) {
+            return ErrorText(onRetry: () => call.getPopular());
+          },
+          loading: () {
+            return const SizedBox(height: 200, child: MediaPosterShimmer());
+          },
+        ),
+        // Trending
+        ViewAll(title: Strings.trending, onPressed: () {}),
+        watch.trending.when(
+          data: (persons) {
+            return SizedBox(
+              height: 400,
+              child: GridView.builder(
+                scrollDirection: Axis.horizontal,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: Constants.peopleGridCrossAxisCount,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 3 / 2),
+                itemBuilder: (context, index) =>
+                    PersonPoster(person: persons[index]),
+                itemCount: persons.length,
+              ),
+            );
+          },
+          error: (_, __) {
+            return ErrorText(onRetry: () => call.getTrending());
+          },
+          loading: () {
+            return const SizedBox(height: 200, child: MediaPosterShimmer());
+          },
+        )
+      ],
+    );
   }
 }
 

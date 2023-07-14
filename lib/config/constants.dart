@@ -12,4 +12,5 @@ class Constants {
   static const sliverAppBarMaxHeightFactor = 0.30; // 25%
   static const defaultSvgColor = '#6c63ff';
   static const mediaPosterCornerRadius = 12.0;
+  static const peopleGridCrossAxisCount = 2;
 }

@@ -1,0 +1,47 @@
+import 'dart:async';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:movie_flix/features/home/presentation/riverpod/persons/persons_state.dart';
+import 'package:movie_flix/utils/utils.dart';
+
+import '../../../data/persons/persons_service.dart';
+
+final personsControllerProvider =
+    NotifierProvider<PersonsController, PersonsState>(PersonsController.new);
+
+class PersonsController extends Notifier<PersonsState> {
+  late final BasePersonsService _personsService;
+
+  @override
+  PersonsState build() {
+    Utils.logPrint(message: 'Building $runtimeType');
+
+    _personsService = ref.read(basePersonsServiceProvider);
+
+    return const PersonsState();
+  }
+
+  Future<void> getPopular({int page = 1}) async {
+    state = state.copyWith(popular: const AsyncLoading());
+
+    final result = await _personsService.getPopular();
+
+    result.fold(
+      (failure) => state =
+          state.copyWith(popular: AsyncError(failure, StackTrace.current)),
+      (persons) => state = state.copyWith(popular: AsyncData(persons)),
+    );
+  }
+
+  Future<void> getTrending({int page = 1}) async {
+    state = state.copyWith(trending: const AsyncLoading());
+
+    final result = await _personsService.getTrending();
+
+    result.fold(
+      (failure) => state =
+          state.copyWith(trending: AsyncError(failure, StackTrace.current)),
+      (persons) => state = state.copyWith(trending: AsyncData(persons)),
+    );
+  }
+}

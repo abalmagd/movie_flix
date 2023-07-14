@@ -7,24 +7,21 @@ import 'package:movie_flix/shared/presentation/frosted_container.dart';
 
 import '../../../../config/theme/palette.dart';
 import '../../../../utils/strings.dart';
-import '../../domain/media.dart';
-import '../riverpod/media_state.dart';
+import '../../domain/person.dart';
 
-class MediaPoster extends ConsumerStatefulWidget {
-  const MediaPoster({
+class PersonPoster extends ConsumerStatefulWidget {
+  const PersonPoster({
     Key? key,
-    required this.media,
-    required this.state,
+    required this.person,
   }) : super(key: key);
 
-  final Media media;
-  final MediaState state;
+  final Person person;
 
   @override
-  ConsumerState<MediaPoster> createState() => _MediaPosterState();
+  ConsumerState<PersonPoster> createState() => _PersonPosterState();
 }
 
-class _MediaPosterState extends ConsumerState<MediaPoster> {
+class _PersonPosterState extends ConsumerState<PersonPoster> {
   int t = 0;
   bool showInfo = false;
 
@@ -42,7 +39,7 @@ class _MediaPosterState extends ConsumerState<MediaPoster> {
           child: Stack(
             children: [
               Image.network(
-                '${RemoteEnvironment.tmdbImage}${RemoteEnvironment.posterQuality}${widget.media.posterPath}?t=$t',
+                '${RemoteEnvironment.tmdbImage}${RemoteEnvironment.posterQuality}${widget.person.profilePath}?t=$t',
                 errorBuilder: (_, __, ___) {
                   Timer(const Duration(seconds: 5), () {
                     setState(() {
@@ -74,84 +71,62 @@ class _MediaPosterState extends ConsumerState<MediaPoster> {
                           child: Column(
                             children: [
                               Text(
-                                widget.media.title,
+                                widget.person.name,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
                                 style: theme.textTheme.bodyLarge
                                     ?.copyWith(color: Palette.white),
                               ),
+                              const SizedBox(height: 4),
+                              Text(
+                                Strings.knownFor,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: theme.textTheme.bodySmall
+                                    ?.copyWith(color: Palette.white),
+                              ),
                               Expanded(
                                 child: SingleChildScrollView(
                                   padding:
-                                  const EdgeInsets.symmetric(vertical: 6),
+                                      const EdgeInsets.symmetric(vertical: 6),
                                   child: Wrap(
                                     direction: Axis.horizontal,
                                     spacing: 4,
                                     runSpacing: 8,
-                                    children: widget.media.genreIds
+                                    children: widget.person.knownFor
                                         .map(
-                                          (id) => Container(
-                                        padding: const EdgeInsets.all(4),
-                                        decoration: BoxDecoration(
-                                          color: Palette.white
-                                              .withOpacity(0.24),
-                                          border: Border.all(
-                                            color: Palette.white,
-                                          ),
-                                          borderRadius:
-                                          BorderRadius.circular(20),
-                                        ),
-                                        child: widget.state.genres.when(
-                                              data: (genres) {
-                                                return Text(
-                                                  genres
-                                                      .firstWhere(
-                                                        (genre) =>
-                                                            genre.id == id,
-                                                      )
-                                                      .name,
-                                                  style: theme
-                                                      .textTheme.bodySmall
-                                                      ?.copyWith(
+                                          (media) => Container(
+                                            padding: const EdgeInsets.all(4),
+                                            decoration: BoxDecoration(
+                                              color: Palette.white
+                                                  .withOpacity(0.24),
+                                              border: Border.all(
                                                 color: Palette.white,
                                               ),
-                                            );
-                                          },
-                                          error: (_, __) {
-                                            return const SizedBox.shrink();
-                                              },
-                                          loading: () {
-                                            return const CircularProgressIndicator();
-                                          },
-                                        ),
-                                      ),
-                                    )
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            child: Text(
+                                              media.title,
+                                              textAlign: TextAlign.center,
+                                              style: theme.textTheme.bodySmall
+                                                  ?.copyWith(
+                                                color: Palette.white,
+                                              ),
+                                            ),
+                                          ),
+                                        )
                                         .toList(),
                                   ),
                                 ),
                               ),
-                              Row(
-                                children: [
-                                  Text(
-                                    '${widget.media.releaseDate.year}',
-                                    style: theme.textTheme.bodyLarge?.copyWith(
-                                      color: Palette.white,
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  const Icon(
-                                    Icons.star_rate_rounded,
-                                    color: Palette.starOrange,
-                                    size: 20,
-                                  ),
-                                  Text(
-                                    widget.media.voteAverage.toStringAsFixed(1),
-                                    style: theme.textTheme.bodyLarge?.copyWith(
-                                      color: Palette.white,
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                widget.person.knownForDepartment,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: Palette.white,
+                                ),
                               ),
                             ],
                           ),

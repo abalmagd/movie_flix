@@ -4,21 +4,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/features/home/data/movies/movies_service.dart';
 import 'package:movie_flix/utils/utils.dart';
 
-import '../../../../../shared/data/local_storage.dart';
 import '../media_state.dart';
 
 final moviesControllerProvider =
     NotifierProvider<MoviesController, MediaState>(MoviesController.new);
 
 class MoviesController extends Notifier<MediaState> {
-  late final SharedPrefs _sharedPrefs;
   late final BaseMoviesService _moviesService;
 
   @override
   MediaState build() {
     Utils.logPrint(message: 'Building $runtimeType');
-
-    _sharedPrefs = ref.read(sharedPrefsProvider);
     _moviesService = ref.read(baseMoviesServiceProvider);
 
     return const MediaState();
