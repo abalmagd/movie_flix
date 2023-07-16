@@ -7,17 +7,26 @@ import 'package:movie_flix/utils/utils.dart';
 import '../media_state.dart';
 
 final moviesControllerProvider =
-    NotifierProvider<MoviesController, MediaState>(MoviesController.new);
+    StateNotifierProvider<MoviesController, MediaState>(
+  (ref) {
+    return MoviesController(
+      const MediaState(),
+      ref.read(baseMoviesServiceProvider),
+    );
+  },
+);
 
-class MoviesController extends Notifier<MediaState> {
+class MoviesController extends StateNotifier<MediaState> {
   late final BaseMoviesService _moviesService;
 
-  @override
-  MediaState build() {
+  MoviesController(MediaState state, this._moviesService) : super(state) {
     Utils.logPrint(message: 'Building $runtimeType');
-    _moviesService = ref.read(baseMoviesServiceProvider);
-
-    return const MediaState();
+    getGenres();
+    getNowPlaying();
+    getPopular();
+    getTrending();
+    getTopRated();
+    getUpcoming();
   }
 
   Future<void> getNowPlaying({int page = 1}) async {

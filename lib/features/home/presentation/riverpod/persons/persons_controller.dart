@@ -7,18 +7,22 @@ import 'package:movie_flix/utils/utils.dart';
 import '../../../data/persons/persons_service.dart';
 
 final personsControllerProvider =
-    NotifierProvider<PersonsController, PersonsState>(PersonsController.new);
+    StateNotifierProvider<PersonsController, PersonsState>(
+  (ref) {
+    return PersonsController(
+      const PersonsState(),
+      ref.read(basePersonsServiceProvider),
+    );
+  },
+);
 
-class PersonsController extends Notifier<PersonsState> {
+class PersonsController extends StateNotifier<PersonsState> {
   late final BasePersonsService _personsService;
 
-  @override
-  PersonsState build() {
+  PersonsController(PersonsState state, this._personsService) : super(state) {
     Utils.logPrint(message: 'Building $runtimeType');
-
-    _personsService = ref.read(basePersonsServiceProvider);
-
-    return const PersonsState();
+    getPopular();
+    getTrending();
   }
 
   Future<void> getPopular({int page = 1}) async {

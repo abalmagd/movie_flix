@@ -16,6 +16,7 @@ class MediaPosterShimmer extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         itemBuilder: (context, index) => AspectRatio(
           aspectRatio: 2 / 3,
           child: Container(

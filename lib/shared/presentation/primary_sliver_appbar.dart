@@ -98,6 +98,7 @@ class PrimarySliverAppBar extends ConsumerWidget {
                     if (collapsedImage != null)
                       Positioned.fill(child: collapsedImage!),
                     FlexibleSpaceBar(
+                      expandedTitleScale: 1.3,
                       title: AnimatedOpacity(
                         duration: const Duration(milliseconds: 0),
                         opacity: height == appBarHeight
@@ -107,7 +108,7 @@ class PrimarySliverAppBar extends ConsumerWidget {
                         child: expandedTitle,
                       ),
                       titlePadding: EdgeInsets.zero,
-                      collapseMode: collapseMode ?? CollapseMode.parallax,
+                      collapseMode: collapseMode ?? CollapseMode.pin,
                       background: expandedImage,
                     ),
                   ],

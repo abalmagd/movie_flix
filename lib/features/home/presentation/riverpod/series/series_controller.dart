@@ -7,18 +7,25 @@ import '../../../data/series/series_service.dart';
 import '../media_state.dart';
 
 final seriesControllerProvider =
-    NotifierProvider<SeriesController, MediaState>(SeriesController.new);
+    StateNotifierProvider<SeriesController, MediaState>(
+  (ref) {
+    return SeriesController(
+      const MediaState(),
+      ref.read(baseSeriesServiceProvider),
+    );
+  },
+);
 
-class SeriesController extends Notifier<MediaState> {
+class SeriesController extends StateNotifier<MediaState> {
   late final BaseSeriesService _seriesService;
 
-  @override
-  MediaState build() {
+  SeriesController(MediaState state, this._seriesService) : super(state) {
     Utils.logPrint(message: 'Building $runtimeType');
 
-    _seriesService = ref.read(baseSeriesServiceProvider);
-
-    return const MediaState();
+    getGenres();
+    getPopular();
+    getTrending();
+    getTopRated();
   }
 
   Future<void> getPopular({int page = 1}) async {

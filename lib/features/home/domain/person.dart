@@ -31,7 +31,8 @@ class Person {
         knownForDepartment: json['known_for_department'],
         name: json['name'],
         popularity: json['popularity']?.toDouble(),
-        profilePath: json['profile_path'],
+        profilePath: json['profile_path'] ??
+            'https://reactjsexample.com/content/images/2022/07/shorty-screenshot.png',
       );
 
   Map<String, dynamic> toJson() => {

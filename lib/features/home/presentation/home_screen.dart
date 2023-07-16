@@ -1,7 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:movie_flix/config/constants.dart';
 import 'package:movie_flix/features/home/presentation/riverpod/movies/movies_controller.dart';
 import 'package:movie_flix/features/home/presentation/riverpod/persons/persons_controller.dart';
 import 'package:movie_flix/features/home/presentation/riverpod/series/series_controller.dart';
@@ -31,31 +30,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     const SeriesTab(),
     const PeopleTab(),
   ];
+
   late final CarouselController _textCarouselController;
   late final CarouselController _backdropCarouselController;
+  bool isScrolling = false;
 
   @override
   void initState() {
     super.initState();
-    Future(() {
-      ref.read(moviesControllerProvider.notifier)
-        ..getGenres()
-        ..getNowPlaying()
-        ..getPopular()
-        ..getTopRated()
-        ..getTrending()
-        ..getUpcoming();
 
-      ref.read(seriesControllerProvider.notifier)
-        ..getGenres()
-        ..getPopular()
-        ..getTopRated()
-        ..getTrending();
-
-      ref.read(personsControllerProvider.notifier)
-        ..getPopular()
-        ..getTrending();
-    });
     _textCarouselController = CarouselController();
     _backdropCarouselController = CarouselController();
   }
@@ -243,7 +226,7 @@ class MoviesTab extends ConsumerWidget {
     final call = ref.read(moviesControllerProvider.notifier);
     final watch = ref.watch(moviesControllerProvider);
     return ListView(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       children: [
         // Popular
         ViewAll(title: Strings.popular, onPressed: () {}),
@@ -253,6 +236,7 @@ class MoviesTab extends ConsumerWidget {
               height: 200,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 itemBuilder: (context, index) => MediaPoster(
                   media: movies[index],
                   state: watch,
@@ -277,6 +261,7 @@ class MoviesTab extends ConsumerWidget {
               height: 200,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 itemBuilder: (context, index) => MediaPoster(
                   media: movies[index],
                   state: watch,
@@ -301,6 +286,7 @@ class MoviesTab extends ConsumerWidget {
               height: 200,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 itemBuilder: (context, index) => MediaPoster(
                   media: movies[index],
                   state: watch,
@@ -325,6 +311,7 @@ class MoviesTab extends ConsumerWidget {
               height: 200,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 itemBuilder: (context, index) => MediaPoster(
                   media: movies[index],
                   state: watch,
@@ -355,7 +342,7 @@ class SeriesTab extends ConsumerWidget {
     final watch = ref.watch(seriesControllerProvider);
     // final watch = ref.watch(seriesControllerProvider);
     return ListView(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       children: [
         // Popular
         ViewAll(title: Strings.popular, onPressed: () {}),
@@ -365,6 +352,7 @@ class SeriesTab extends ConsumerWidget {
               height: 200,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 itemBuilder: (context, index) =>
                     MediaPoster(media: series[index], state: watch),
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
@@ -387,6 +375,7 @@ class SeriesTab extends ConsumerWidget {
               height: 200,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 itemBuilder: (context, index) =>
                     MediaPoster(media: series[index], state: watch),
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
@@ -409,6 +398,7 @@ class SeriesTab extends ConsumerWidget {
               height: 200,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 itemBuilder: (context, index) =>
                     MediaPoster(media: series[index], state: watch),
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
@@ -436,23 +426,20 @@ class PeopleTab extends ConsumerWidget {
     final call = ref.read(personsControllerProvider.notifier);
     final watch = ref.watch(personsControllerProvider);
     return ListView(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       children: [
         // Popular
         ViewAll(title: Strings.popular, onPressed: () {}),
         watch.popular.when(
           data: (persons) {
             return SizedBox(
-              height: 400,
-              child: GridView.builder(
+              height: 225,
+              child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: Constants.peopleGridCrossAxisCount,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 3 / 2),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 itemBuilder: (context, index) =>
                     PersonPoster(person: persons[index]),
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemCount: persons.length,
               ),
             );
@@ -469,16 +456,14 @@ class PeopleTab extends ConsumerWidget {
         watch.trending.when(
           data: (persons) {
             return SizedBox(
-              height: 400,
-              child: GridView.builder(
+              height: 225,
+              child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: Constants.peopleGridCrossAxisCount,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 3 / 2),
+                shrinkWrap: true,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 itemBuilder: (context, index) =>
                     PersonPoster(person: persons[index]),
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemCount: persons.length,
               ),
             );
@@ -534,15 +519,18 @@ class ViewAll extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(title),
-        const Spacer(),
-        TextButton(
-          onPressed: onPressed,
-          child: const Text(Strings.viewAll),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      child: Row(
+        children: [
+          Text(title),
+          const Spacer(),
+          TextButton(
+            onPressed: onPressed,
+            child: const Text(Strings.viewAll),
+          ),
+        ],
+      ),
     );
   }
 }
