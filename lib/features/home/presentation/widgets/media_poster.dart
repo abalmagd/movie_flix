@@ -1,9 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/shared/data/environment_variables.dart';
 import 'package:movie_flix/shared/presentation/frosted_container.dart';
+import 'package:movie_flix/shared/presentation/network_fading_image.dart';
 
 import '../../../../config/theme/palette.dart';
 import '../../../../utils/strings.dart';
@@ -25,7 +24,6 @@ class MediaPoster extends ConsumerStatefulWidget {
 }
 
 class _MediaPosterState extends ConsumerState<MediaPoster> {
-  int t = 0;
   bool showInfo = false;
 
   @override
@@ -41,20 +39,10 @@ class _MediaPosterState extends ConsumerState<MediaPoster> {
           }),
           child: Stack(
             children: [
-              Image.network(
-                '${RemoteEnvironment.tmdbImage}${RemoteEnvironment.posterQuality}${widget.media.posterPath}?t=$t',
-                errorBuilder: (_, __, ___) {
-                  Timer(const Duration(seconds: 5), () {
-                    setState(() {
-                      t++;
-                    });
-                  });
-                  return const SizedBox.shrink();
-                },
-                filterQuality: FilterQuality.none,
-                width: double.infinity,
-                height: double.infinity,
-                fit: BoxFit.cover,
+              NetworkFadingImage(
+                path: '${RemoteEnvironment.tmdbImage}'
+                    '${RemoteEnvironment.posterQuality}'
+                    '${widget.media.posterPath}',
               ),
               AnimatedOpacity(
                 opacity: showInfo ? 1 : 0,
@@ -84,7 +72,7 @@ class _MediaPosterState extends ConsumerState<MediaPoster> {
                               Expanded(
                                 child: SingleChildScrollView(
                                   padding:
-                                  const EdgeInsets.symmetric(vertical: 6),
+                                      const EdgeInsets.symmetric(vertical: 6),
                                   child: Wrap(
                                     direction: Axis.horizontal,
                                     spacing: 4,
@@ -92,17 +80,17 @@ class _MediaPosterState extends ConsumerState<MediaPoster> {
                                     children: widget.media.genreIds
                                         .map(
                                           (id) => Container(
-                                        padding: const EdgeInsets.all(4),
-                                        decoration: BoxDecoration(
-                                          color: Palette.white
-                                              .withOpacity(0.24),
-                                          border: Border.all(
-                                            color: Palette.white,
-                                          ),
-                                          borderRadius:
-                                          BorderRadius.circular(20),
-                                        ),
-                                        child: widget.state.genres.when(
+                                            padding: const EdgeInsets.all(4),
+                                            decoration: BoxDecoration(
+                                              color: Palette.white
+                                                  .withOpacity(0.24),
+                                              border: Border.all(
+                                                color: Palette.white,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            child: widget.state.genres.when(
                                               data: (genres) {
                                                 return Text(
                                                   genres
@@ -114,19 +102,19 @@ class _MediaPosterState extends ConsumerState<MediaPoster> {
                                                   style: theme
                                                       .textTheme.bodySmall
                                                       ?.copyWith(
-                                                color: Palette.white,
-                                              ),
-                                            );
-                                          },
-                                          error: (_, __) {
-                                            return const SizedBox.shrink();
+                                                    color: Palette.white,
+                                                  ),
+                                                );
                                               },
-                                          loading: () {
-                                            return const CircularProgressIndicator();
-                                          },
-                                        ),
-                                      ),
-                                    )
+                                              error: (_, __) {
+                                                return const SizedBox.shrink();
+                                              },
+                                              loading: () {
+                                                return const CircularProgressIndicator();
+                                              },
+                                            ),
+                                          ),
+                                        )
                                         .toList(),
                                   ),
                                 ),

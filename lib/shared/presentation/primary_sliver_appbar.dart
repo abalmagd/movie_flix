@@ -108,7 +108,7 @@ class PrimarySliverAppBar extends ConsumerWidget {
                         child: expandedTitle,
                       ),
                       titlePadding: EdgeInsets.zero,
-                      collapseMode: collapseMode ?? CollapseMode.pin,
+                      collapseMode: collapseMode ?? CollapseMode.parallax,
                       background: expandedImage,
                     ),
                   ],

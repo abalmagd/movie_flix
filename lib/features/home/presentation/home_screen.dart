@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/features/home/presentation/riverpod/movies/movies_controller.dart';
 import 'package:movie_flix/features/home/presentation/riverpod/persons/persons_controller.dart';
 import 'package:movie_flix/features/home/presentation/riverpod/series/series_controller.dart';
-import 'package:movie_flix/features/home/presentation/shimmer_placeholders/media_poster_shimmer.dart';
 import 'package:movie_flix/features/home/presentation/widgets/media_poster.dart';
 import 'package:movie_flix/features/home/presentation/widgets/person_poster.dart';
 import 'package:movie_flix/features/home/presentation/widgets/sliver_delegates.dart';
@@ -15,6 +14,8 @@ import 'package:movie_flix/utils/strings.dart';
 
 import '../../../config/theme/palette.dart';
 import '../../../shared/presentation/frosted_container.dart';
+import '../../../shared/presentation/shimmer_placeholders/media_poster_shimmer.dart';
+import '../../../shared/presentation/shimmer_placeholders/person_poster_shimmer.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -64,7 +65,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ?.copyWith(color: Palette.white),
                       ),
                     ),
-                    expandedTitle: CarouselSlider(
+                    expandedImage: CarouselSlider(
                       carouselController: _textCarouselController,
                       options: CarouselOptions(
                         autoPlay: true,
@@ -72,6 +73,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         autoPlayInterval: const Duration(seconds: 10),
                         autoPlayCurve: Curves.ease,
                         viewportFraction: 1,
+                        height: double.infinity,
                         onPageChanged: (index, reason) {
                           _backdropCarouselController.animateToPage(
                             index,
@@ -89,13 +91,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.end,
-                                mainAxisSize: MainAxisSize.min,
+                                mainAxisSize: MainAxisSize.max,
                                 children: [
                                   FrostedContainer(
                                     blurStrength: 6,
                                     child: Text(
                                       Strings.inTheaters,
-                                      style: theme.textTheme.labelLarge
+                                      style: theme.textTheme.titleMedium
                                           ?.copyWith(color: Palette.white),
                                     ),
                                   ),
@@ -106,7 +108,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       movie.title,
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 2,
-                                      style: theme.textTheme.labelLarge
+                                      style: theme.textTheme.titleLarge
                                           ?.copyWith(color: Palette.white),
                                     ),
                                   ),
@@ -186,6 +188,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 },
               ),
               SliverPersistentHeader(
+                pinned: true,
                 delegate: SliverPersistentDelegate(
                   TabBar(
                     dividerColor: theme.tabBarTheme.dividerColor,
@@ -205,7 +208,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ],
                   ),
                 ),
-                pinned: true,
               ),
             ];
           },
@@ -425,57 +427,29 @@ class PeopleTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final call = ref.read(personsControllerProvider.notifier);
     final watch = ref.watch(personsControllerProvider);
-    return ListView(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      children: [
-        // Popular
-        ViewAll(title: Strings.popular, onPressed: () {}),
-        watch.popular.when(
-          data: (persons) {
-            return SizedBox(
-              height: 225,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                itemBuilder: (context, index) =>
-                    PersonPoster(person: persons[index]),
-                separatorBuilder: (context, index) => const SizedBox(width: 12),
-                itemCount: persons.length,
-              ),
-            );
+    return watch.when(
+      data: (persons) {
+        return GridView.builder(
+          padding: const EdgeInsets.all(12),
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 12,
+            mainAxisExtent: 225,
+          ),
+          itemBuilder: (context, index) {
+            return PersonPoster(person: persons[index]);
           },
-          error: (_, __) {
-            return ErrorText(onRetry: () => call.getPopular());
-          },
-          loading: () {
-            return const SizedBox(height: 200, child: MediaPosterShimmer());
-          },
-        ),
-        // Trending
-        ViewAll(title: Strings.trending, onPressed: () {}),
-        watch.trending.when(
-          data: (persons) {
-            return SizedBox(
-              height: 225,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                itemBuilder: (context, index) =>
-                    PersonPoster(person: persons[index]),
-                separatorBuilder: (context, index) => const SizedBox(width: 12),
-                itemCount: persons.length,
-              ),
-            );
-          },
-          error: (_, __) {
-            return ErrorText(onRetry: () => call.getTrending());
-          },
-          loading: () {
-            return const SizedBox(height: 200, child: MediaPosterShimmer());
-          },
-        )
-      ],
+          itemCount: persons.length,
+        );
+      },
+      error: (_, __) {
+        return ErrorText(onRetry: () => call.getPopular());
+      },
+      loading: () {
+        return const SizedBox(height: 200, child: PersonPosterShimmer());
+      },
     );
   }
 }
@@ -519,6 +493,7 @@ class ViewAll extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Row(
@@ -527,6 +502,9 @@ class ViewAll extends StatelessWidget {
           const Spacer(),
           TextButton(
             onPressed: onPressed,
+            style: theme.textButtonTheme.style?.copyWith(
+              padding: MaterialStateProperty.all(EdgeInsets.zero),
+            ),
             child: const Text(Strings.viewAll),
           ),
         ],

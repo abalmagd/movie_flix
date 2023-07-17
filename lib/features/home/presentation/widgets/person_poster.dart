@@ -1,9 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/shared/data/environment_variables.dart';
 import 'package:movie_flix/shared/presentation/frosted_container.dart';
+import 'package:movie_flix/shared/presentation/network_fading_image.dart';
 
 import '../../../../config/theme/palette.dart';
 import '../../../../utils/strings.dart';
@@ -22,7 +21,6 @@ class PersonPoster extends ConsumerStatefulWidget {
 }
 
 class _PersonPosterState extends ConsumerState<PersonPoster> {
-  int t = 0;
   bool showInfo = false;
 
   @override
@@ -38,20 +36,10 @@ class _PersonPosterState extends ConsumerState<PersonPoster> {
           }),
           child: Stack(
             children: [
-              Image.network(
-                '${RemoteEnvironment.tmdbImage}${RemoteEnvironment.posterQuality}${widget.person.profilePath}?t=$t',
-                errorBuilder: (_, __, ___) {
-                  Timer(const Duration(seconds: 5), () {
-                    setState(() {
-                      t++;
-                    });
-                  });
-                  return const SizedBox.shrink();
-                },
-                filterQuality: FilterQuality.none,
-                width: double.infinity,
-                height: double.infinity,
-                fit: BoxFit.cover,
+              NetworkFadingImage(
+                path: '${RemoteEnvironment.tmdbImage}'
+                    '${RemoteEnvironment.posterQuality}'
+                    '${widget.person.profilePath}',
               ),
               AnimatedOpacity(
                 opacity: showInfo ? 1 : 0,
