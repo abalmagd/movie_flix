@@ -20,6 +20,7 @@ class PrimarySliverAppBar extends ConsumerWidget {
     this.collapseMode,
     this.isLoading = false,
     this.inverseColors = false,
+    this.bottom,
   }) : super(key: key);
 
   final Widget? collapsedTitle;
@@ -29,6 +30,7 @@ class PrimarySliverAppBar extends ConsumerWidget {
   final CollapseMode? collapseMode;
   final bool isLoading;
   final bool inverseColors;
+  final PreferredSize? bottom;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,6 +42,7 @@ class PrimarySliverAppBar extends ConsumerWidget {
     final appBarHeight = kToolbarHeight + MediaQuery.of(context).padding.top;
     return SliverAppBar(
       pinned: true,
+      bottom: bottom,
       systemOverlayStyle: inverseColors ? null : SystemUiOverlayStyle.light,
       leading: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -74,15 +77,6 @@ class PrimarySliverAppBar extends ConsumerWidget {
         FrostedContainer(
           tightPadding: true,
           child: ThemeIconButton(
-            color: inverseColors ? theme.iconTheme.color : Palette.white,
-          ),
-        ),
-        const SizedBox(width: 8),
-        FrostedContainer(
-          tightPadding: true,
-          child: IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.person),
             color: inverseColors ? theme.iconTheme.color : Palette.white,
           ),
         ),

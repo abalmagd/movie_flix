@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 
 class NetworkFadingImage extends StatelessWidget {
-  const NetworkFadingImage({super.key, required this.path});
+  const NetworkFadingImage({
+    super.key,
+    required this.path,
+    this.fit = BoxFit.cover,
+    this.width,
+    this.height,
+  });
 
   final String path;
+  final BoxFit fit;
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +31,9 @@ class NetworkFadingImage extends StatelessWidget {
         return const SizedBox.shrink();
       },
       filterQuality: FilterQuality.none,
-      width: double.infinity,
-      height: double.infinity,
-      fit: BoxFit.cover,
+      width: width,
+      height: height,
+      fit: fit,
     );
   }
 }

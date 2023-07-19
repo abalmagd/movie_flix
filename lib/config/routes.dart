@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:movie_flix/features/auth/presentation/auth_screen.dart';
+import 'package:movie_flix/features/details/presentation/details_screen.dart';
 
+import '../features/home/domain/media.dart';
 import '../features/home/presentation/home_screen.dart';
 import '../utils/strings.dart';
 
@@ -18,6 +20,11 @@ class Routing {
         return MaterialPageRoute(builder: (context) => const AuthScreen());
       case HomeScreen.route:
         return MaterialPageRoute(builder: (context) => const HomeScreen());
+      case DetailsScreen.route:
+        final media = args as Media;
+        return MaterialPageRoute(
+          builder: (context) => DetailsScreen(media: media),
+        );
       default:
         return MaterialPageRoute(builder: (context) => const BadRouteScreen());
     }

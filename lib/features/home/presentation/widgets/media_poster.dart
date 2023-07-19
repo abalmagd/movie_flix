@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:movie_flix/features/details/presentation/details_screen.dart';
 import 'package:movie_flix/shared/data/environment_variables.dart';
 import 'package:movie_flix/shared/presentation/frosted_container.dart';
 import 'package:movie_flix/shared/presentation/network_fading_image.dart';
@@ -146,7 +147,13 @@ class _MediaPosterState extends ConsumerState<MediaPoster> {
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            DetailsScreen.route,
+                            arguments: widget.media,
+                          );
+                        },
                         style: theme.elevatedButtonTheme.style?.copyWith(
                           minimumSize: MaterialStateProperty.all(
                             const Size.fromHeight(32),

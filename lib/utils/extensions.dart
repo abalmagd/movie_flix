@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 extension MapExtension on Map {
@@ -25,5 +23,17 @@ extension HexColor on Color {
             '${green.toRadixString(16).padLeft(2, '0')}'
             '${blue.toRadixString(16).padLeft(2, '0')}'
         .toUpperCase();
+  }
+}
+
+extension TextUtils on Text {
+  bool willTextOverflow({required double maxWidth}) {
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(text: data, style: style),
+      maxLines: 1,
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: 0, maxWidth: maxWidth);
+
+    return textPainter.didExceedMaxLines;
   }
 }
