@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:movie_flix/utils/assets.dart';
 import 'package:movie_flix/config/constants.dart';
-import 'package:movie_flix/utils/strings.dart';
 import 'package:movie_flix/config/riverpod/config_controller.dart';
 import 'package:movie_flix/shared/presentation/drawer/drawer_button.dart';
+import 'package:movie_flix/utils/assets.dart';
+import 'package:movie_flix/utils/strings.dart';
 
-import '../../../features/auth/presentation/riverpod/auth_controller.dart';
 import '../../../config/theme/palette.dart';
+import '../../../features/auth/presentation/riverpod/auth_controller.dart';
 
 class PrimaryDrawer extends ConsumerWidget {
   const PrimaryDrawer({Key? key}) : super(key: key);
@@ -68,7 +68,7 @@ class PrimaryDrawer extends ConsumerWidget {
               onTap: () {},
             ),
             // Home
-            DrawerButton(
+            PrimaryDrawerButton(
               text: Strings.home,
               icon: Icons.home,
               route: '/',
@@ -76,7 +76,7 @@ class PrimaryDrawer extends ConsumerWidget {
             ),
             const Spacer(),
             // Logout
-            DrawerButton(
+            PrimaryDrawerButton(
               text: Strings.logout,
               icon: Icons.logout,
               isLoading: auth is AsyncLoading,

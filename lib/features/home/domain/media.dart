@@ -5,7 +5,6 @@
 import 'dart:convert';
 
 class Media {
-  static const int x = 0;
   final bool adult;
   final String? backdropPath;
   final int id;

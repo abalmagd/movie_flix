@@ -51,6 +51,7 @@ dependencies:
   carousel_slider: ^4.2.1
   sliver_tools: ^0.2.12
   marquee: ^2.2.3
+  snapping_sheet: 3.1.0
   cached_network_image: ^3.2.3
 
 

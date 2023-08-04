@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../config/theme/palette.dart';
 
-class DrawerButton extends StatelessWidget {
-  const DrawerButton({
+class PrimaryDrawerButton extends StatelessWidget {
+  const PrimaryDrawerButton({
     Key? key,
     required this.text,
     required this.icon,
