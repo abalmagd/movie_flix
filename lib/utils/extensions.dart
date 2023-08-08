@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart' as intl;
 
 extension MapExtension on Map {
   void changeKeyName(String oldKey, String key) {
@@ -36,4 +37,21 @@ extension TextUtils on Text {
 
     return textPainter.didExceedMaxLines;
   }
+
+  Size get textSize {
+    final textPainter = TextPainter(
+      text: TextSpan(text: data, style: style),
+      maxLines: 1,
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: 0, maxWidth: double.infinity);
+    return textPainter.size;
+  }
+}
+
+extension StringUtils on String {
+  String get proper => this[0].toUpperCase() + substring(1);
+}
+
+extension IntUtils on int {
+  String get kFormat => intl.NumberFormat.compact().format(this);
 }

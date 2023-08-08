@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_flix/features/details/presentation/details_screen.dart';
 import 'package:movie_flix/shared/data/environment_variables.dart';
 import 'package:movie_flix/shared/presentation/frosted_container.dart';
+import 'package:movie_flix/shared/presentation/info_chip.dart';
 import 'package:movie_flix/shared/presentation/network_fading_image.dart';
 
 import '../../../../config/theme/palette.dart';
@@ -49,9 +50,6 @@ class _MediaPosterState extends ConsumerState<MediaPoster> {
                 opacity: showInfo ? 1 : 0,
                 duration: const Duration(milliseconds: 200),
                 child: FrostedContainer(
-                  tightPadding: true,
-                  borderRadius: 0,
-                  blurStrength: 12,
                   child: Column(
                     children: [
                       Expanded(
@@ -74,49 +72,31 @@ class _MediaPosterState extends ConsumerState<MediaPoster> {
                                 child: SingleChildScrollView(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 6),
-                                  child: Wrap(
-                                    direction: Axis.horizontal,
-                                    spacing: 4,
-                                    runSpacing: 8,
-                                    children: widget.media.genreIds
-                                        .map(
-                                          (id) => Container(
-                                            padding: const EdgeInsets.all(4),
-                                            decoration: BoxDecoration(
-                                              color: Palette.white
-                                                  .withOpacity(0.24),
-                                              border: Border.all(
-                                                color: Palette.white,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: widget.state.genres.when(
-                                              data: (genres) {
-                                                return Text(
-                                                  genres
+                                  child: widget.state.genres.when(
+                                    data: (genres) {
+                                      return Wrap(
+                                        direction: Axis.horizontal,
+                                        spacing: 4,
+                                        runSpacing: 8,
+                                        children: widget.media.genreIds
+                                            .map(
+                                              (id) => InfoChip(
+                                                  text: genres
                                                       .firstWhere(
                                                         (genre) =>
                                                             genre.id == id,
                                                       )
-                                                      .name,
-                                                  style: theme
-                                                      .textTheme.bodySmall
-                                                      ?.copyWith(
-                                                    color: Palette.white,
-                                                  ),
-                                                );
-                                              },
-                                              error: (_, __) {
-                                                return const SizedBox.shrink();
-                                              },
-                                              loading: () {
-                                                return const CircularProgressIndicator();
-                                              },
-                                            ),
-                                          ),
-                                        )
-                                        .toList(),
+                                                      .name),
+                                            )
+                                            .toList(),
+                                      );
+                                    },
+                                    error: (_, __) {
+                                      return const SizedBox.shrink();
+                                    },
+                                    loading: () {
+                                      return const CircularProgressIndicator();
+                                    },
                                   ),
                                 ),
                               ),

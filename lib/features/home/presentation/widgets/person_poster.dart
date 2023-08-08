@@ -40,14 +40,12 @@ class _PersonPosterState extends ConsumerState<PersonPoster> {
                 path: '${RemoteEnvironment.tmdbImage}'
                     '${RemoteEnvironment.posterQuality}'
                     '${widget.person.profilePath}',
+                width: double.infinity,
               ),
               AnimatedOpacity(
                 opacity: showInfo ? 1 : 0,
                 duration: const Duration(milliseconds: 200),
                 child: FrostedContainer(
-                  tightPadding: true,
-                  borderRadius: 0,
-                  blurStrength: 12,
                   child: Column(
                     children: [
                       Expanded(

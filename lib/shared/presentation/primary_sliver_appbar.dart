@@ -44,21 +44,17 @@ class PrimarySliverAppBar extends ConsumerWidget {
       pinned: true,
       bottom: bottom,
       systemOverlayStyle: inverseColors ? null : SystemUiOverlayStyle.light,
-      leading: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: FrostedContainer(
-          tightPadding: true,
-          borderRadius: 14,
-          child: IconButton(
-            icon: SvgPicture.asset(
-              Assets.drawerIcon,
-              colorFilter: ColorFilter.mode(
-                inverseColors ? theme.iconTheme.color! : Palette.white,
-                BlendMode.srcIn,
-              ),
+      leading: FrostedContainer(
+        outerPadding: const EdgeInsets.all(8),
+        child: IconButton(
+          icon: SvgPicture.asset(
+            Assets.drawerIcon,
+            colorFilter: ColorFilter.mode(
+              inverseColors ? theme.iconTheme.color! : Palette.white,
+              BlendMode.srcIn,
             ),
-            onPressed: Scaffold.of(context).openDrawer,
           ),
+          onPressed: Scaffold.of(context).openDrawer,
         ),
       ),
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -75,7 +71,8 @@ class PrimarySliverAppBar extends ConsumerWidget {
           : collapsedTitle,
       actions: [
         FrostedContainer(
-          tightPadding: true,
+          outerPadding: const EdgeInsets.symmetric(vertical: 8),
+          borderRadius: 20,
           child: ThemeIconButton(
             color: inverseColors ? theme.iconTheme.color : Palette.white,
           ),

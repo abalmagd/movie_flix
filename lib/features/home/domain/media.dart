@@ -13,7 +13,7 @@ class Media {
   final String originalTitle;
   final String overview;
   final String? posterPath;
-  final String? mediaType;
+  final String mediaType;
   final List<int> genreIds;
   final double popularity;
   final DateTime releaseDate;
@@ -45,24 +45,24 @@ class Media {
 
   factory Media.fromJson(Map<String, dynamic> json) => Media(
     adult: json['adult'] ?? false,
-    backdropPath: json['backdrop_path'],
-    id: json['id'],
-    title: json['title'] ?? json['name'],
-    originalLanguage: json['original_language'],
-    originalTitle: json['original_title'] ?? json['original_name'],
-    overview: json['overview'],
-    posterPath: json['poster_path'],
-    mediaType: json['media_type'],
-    genreIds: json['genre_ids'] == null
-        ? List<int>.from(json['genres'].map((x) => x))
-        : List<int>.from(json['genre_ids'].map((x) => x)),
-    popularity: json['popularity']?.toDouble() ?? 0.0,
-    releaseDate:
-    DateTime.parse(json['release_date'] ?? json['first_air_date']),
-    video: json['video'] ?? false,
-    voteAverage: json['vote_average']?.toDouble(),
-    voteCount: json['vote_count'],
-  );
+        backdropPath: json['backdrop_path'],
+        id: json['id'],
+        title: json['title'] ?? json['name'],
+        originalLanguage: json['original_language'],
+        originalTitle: json['original_title'] ?? json['original_name'],
+        overview: json['overview'],
+        posterPath: json['poster_path'],
+        mediaType: json['media_type'] ?? 'N/A',
+        genreIds: json['genre_ids'] == null
+            ? List<int>.from(json['genres'].map((x) => x))
+            : List<int>.from(json['genre_ids'].map((x) => x)),
+        popularity: json['popularity']?.toDouble() ?? 0.0,
+        releaseDate:
+            DateTime.parse(json['release_date'] ?? json['first_air_date']),
+        video: json['video'] ?? false,
+        voteAverage: json['vote_average']?.toDouble(),
+        voteCount: json['vote_count'],
+      );
 
   Map<String, dynamic> toJson() =>
       {
@@ -74,11 +74,11 @@ class Media {
         'original_title': originalTitle,
         'overview': overview,
         'poster_path': posterPath,
-        'media_type': mediaType,
+        'media_type': mediaType ?? 'N/A',
         'genre_ids': List<dynamic>.from(genreIds.map((x) => x)),
         'popularity': popularity,
         'release_date':
-        '${releaseDate.year.toString().padLeft(4, '0')}-${releaseDate.month.toString().padLeft(2, '0')}-${releaseDate.day.toString().padLeft(2, '0')}',
+            '${releaseDate.year.toString().padLeft(4, '0')}-${releaseDate.month.toString().padLeft(2, '0')}-${releaseDate.day.toString().padLeft(2, '0')}',
         'video': video,
         'vote_average': voteAverage,
         'vote_count': voteCount,

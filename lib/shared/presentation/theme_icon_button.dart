@@ -18,6 +18,8 @@ class ThemeIconButton extends ConsumerWidget {
         ref.read(configControllerProvider.notifier).changeThemeMode(context);
       },
       icon: const Icon(Icons.dark_mode),
+      padding: EdgeInsets.zero,
+      visualDensity: VisualDensity.compact,
       splashRadius: 20,
       color: color,
     );

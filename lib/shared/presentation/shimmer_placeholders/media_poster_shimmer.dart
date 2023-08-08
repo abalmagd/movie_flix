@@ -18,7 +18,7 @@ class MediaPosterShimmer extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 12),
         itemBuilder: (context, index) => AspectRatio(
-          aspectRatio: 2 / 3,
+          aspectRatio: Constants.mediaPosterAspectRatio,
           child: Container(
             width: double.infinity,
             height: double.infinity,

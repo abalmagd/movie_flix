@@ -8,11 +8,13 @@ class PrimaryAppBar extends ConsumerWidget implements PreferredSizeWidget {
     this.title = '',
     this.centerTitle = true,
     this.titleWidget,
+    this.leading,
   }) : super(key: key);
 
   final String title;
   final bool centerTitle;
   final Widget? titleWidget;
+  final Widget? leading;
 
   @override
   Size get preferredSize => const Size(double.infinity, kToolbarHeight);
@@ -27,8 +29,11 @@ class PrimaryAppBar extends ConsumerWidget implements PreferredSizeWidget {
             style: theme.textTheme.titleLarge
                 ?.copyWith(color: theme.colorScheme.primary),
           ),
+      leading: leading,
       centerTitle: centerTitle,
-      actions: const [ThemeIconButton()],
+      actions: const [
+        ThemeIconButton(),
+      ],
     );
   }
 }

@@ -13,4 +13,6 @@ class Constants {
   static const defaultSvgColor = '#6c63ff';
   static const mediaPosterCornerRadius = 12.0;
   static const peopleGridCrossAxisCount = 2;
+  static const mediaDetailPosterHeight = 150.0;
+  static const mediaPosterAspectRatio = 2 / 3;
 }

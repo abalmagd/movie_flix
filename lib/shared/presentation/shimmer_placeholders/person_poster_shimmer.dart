@@ -24,7 +24,7 @@ class PersonPosterShimmer extends StatelessWidget {
         ),
         itemBuilder: (context, index) {
           return AspectRatio(
-            aspectRatio: 2 / 3,
+            aspectRatio: Constants.mediaPosterAspectRatio,
             child: Container(
               width: double.infinity,
               height: double.infinity,

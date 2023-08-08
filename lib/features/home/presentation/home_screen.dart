@@ -9,6 +9,7 @@ import 'package:movie_flix/features/home/presentation/widgets/person_poster.dart
 import 'package:movie_flix/features/home/presentation/widgets/sliver_delegates.dart';
 import 'package:movie_flix/shared/data/environment_variables.dart';
 import 'package:movie_flix/shared/presentation/drawer/primary_drawer.dart';
+import 'package:movie_flix/shared/presentation/network_fading_image.dart';
 import 'package:movie_flix/shared/presentation/primary_sliver_appbar.dart';
 import 'package:movie_flix/utils/strings.dart';
 
@@ -59,6 +60,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 data: (movies) {
                   return PrimarySliverAppBar(
                     collapsedTitle: FrostedContainer(
+                      innerPadding: const EdgeInsets.symmetric(
+                          vertical: 4, horizontal: 8),
                       child: Text(
                         Strings.home,
                         style: theme.textTheme.titleLarge
@@ -94,7 +97,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   FrostedContainer(
-                                    blurStrength: 6,
+                                    innerPadding: const EdgeInsets.symmetric(
+                                        vertical: 4, horizontal: 8),
                                     child: Text(
                                       Strings.inTheaters,
                                       style: theme.textTheme.titleMedium
@@ -103,7 +107,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   FrostedContainer(
-                                    blurStrength: 6,
+                                    outerPadding:
+                                        const EdgeInsets.symmetric(vertical: 4),
+                                    innerPadding: const EdgeInsets.symmetric(
+                                        vertical: 4, horizontal: 8),
                                     child: Text(
                                       movie.title,
                                       overflow: TextOverflow.ellipsis,
@@ -129,11 +136,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                       items: movies.map(
                         (movie) {
-                          return Image.network(
-                            '${RemoteEnvironment.tmdbImage}${RemoteEnvironment.backdropQuality}${movie.backdropPath}',
+                          return NetworkFadingImage(
+                            path:
+                                '${RemoteEnvironment.tmdbImage}${RemoteEnvironment.backdropQuality}${movie.backdropPath}',
                             fit: BoxFit.cover,
                             width: double.infinity,
-                            filterQuality: FilterQuality.none,
                           );
                         },
                       ).toList(),

@@ -26,4 +26,5 @@ class Strings {
       'your login on themoviedb.org.';
   static const error = 'An error occurred.';
   static const tryAgain = 'Try again';
+  static const overview = 'Overview';
 }
