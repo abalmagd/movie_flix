@@ -23,4 +23,13 @@ class MediaDetailsController extends StateNotifier<MediaDetailsState> {
       : super(state) {
     Utils.logPrint(message: 'Building $runtimeType');
   }
+
+  Future<void> test({required int id}) async {
+    final result = await _mediaDetailsService.getMovieDetails(movieId: id);
+
+    result.fold(
+      (failure) => print(failure.message),
+      (details) => print(details.toJson()),
+    );
+  }
 }

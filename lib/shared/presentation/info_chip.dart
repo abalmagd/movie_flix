@@ -9,18 +9,20 @@ class InfoChip extends StatelessWidget {
     this.backgroundColor = Palette.black,
     this.borderColor = Palette.white,
     this.noOpacity = false,
+    this.padding = const EdgeInsets.all(4),
   });
 
   final String text;
   final Color backgroundColor;
   final Color borderColor;
   final bool noOpacity;
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      padding: const EdgeInsets.all(4),
+      padding: padding,
       decoration: BoxDecoration(
         color: backgroundColor.withOpacity(noOpacity ? 1 : 0.4),
         border: Border.all(color: borderColor),

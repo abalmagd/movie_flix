@@ -2,6 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:movie_flix/features/details/presentation/riverpod/media_details_controller.dart';
+import 'package:movie_flix/features/home/presentation/riverpod/series/series_controller.dart';
 import 'package:movie_flix/shared/presentation/frosted_container.dart';
 import 'package:movie_flix/shared/presentation/info_chip.dart';
 import 'package:movie_flix/shared/presentation/network_fading_image.dart';
@@ -29,7 +31,8 @@ class DetailsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final size = MediaQuery.of(context).size;
-    final read = ref.read(moviesControllerProvider);
+    final genres = (ref.read(moviesControllerProvider).genres.value ?? []) +
+        (ref.read(seriesControllerProvider).genres.value ?? []);
     return Scaffold(
       extendBodyBehindAppBar: true,
       drawer: const PrimaryDrawer(),
@@ -74,38 +77,85 @@ class DetailsScreen extends ConsumerWidget {
                     top: Radius.circular(16),
                   ),
                 ),
-                child: Column(
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const Column(
+                      children: [
+                        SizedBox(
+                          height: Constants.mediaDetailPosterHeight - 30,
+                          width: Constants.mediaDetailPosterHeight *
+                                  Constants.mediaPosterAspectRatio +
+                              20,
+                        ),
+                        // TODO: Collection Icons here
+                      ],
+                    ),
                     Expanded(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(
-                            height: Constants.mediaDetailPosterHeight - 30,
-                            width: Constants.mediaDetailPosterHeight *
-                                    Constants.mediaPosterAspectRatio +
-                                20,
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 4.0,
-                                horizontal: 8.0,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              media.title,
+                              style: theme.textTheme.titleLarge,
+                              maxLines: 2,
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Text(
+                                  '${media.releaseDate.year}',
+                                  style: theme.textTheme.bodyLarge,
+                                ),
+                                const Icon(
+                                  Icons.star_rate_rounded,
+                                  color: Palette.starOrange,
+                                  size: 20,
+                                ),
+                                Text(
+                                  media.voteAverage.toStringAsFixed(1),
+                                  style: theme.textTheme.bodyLarge,
+                                ),
+                                const SizedBox(width: 8),
+                                InfoChip(
+                                  text: '${media.voteCount.kFormat} Reviews',
+                                  padding: const EdgeInsets.all(2),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: Wrap(
+                                  direction: Axis.horizontal,
+                                  spacing: 4,
+                                  runSpacing: 8,
+                                  children: [
+                                    if (media.adult)
+                                      const InfoChip(
+                                        text: 'Adult',
+                                        noOpacity: true,
+                                        backgroundColor: Palette.danger,
+                                      ),
+                                    ...media.genreIds
+                                        .map(
+                                          (id) => InfoChip(
+                                              text: genres
+                                                  .firstWhere(
+                                                    (genre) => genre.id == id,
+                                                  )
+                                                  .name),
+                                        )
+                                        .toList()
+                                  ],
+                                ),
                               ),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    media.title,
-                                    style: theme.textTheme.titleLarge,
-                                    maxLines: 2,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Expanded(
+                            ),
+                            /*Expanded(
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
                                       child: Column(
@@ -128,77 +178,42 @@ class DetailsScreen extends ConsumerWidget {
                                                 text:
                                                     '${media.voteCount.kFormat} Reviews',
                                               ),
+                                              ...media.genreIds
+                                                  .map(
+                                                    (id) => InfoChip(
+                                                    text: genres
+                                                        .firstWhere(
+                                                          (genre) =>
+                                                      genre.id == id,
+                                                    )
+                                                        .name),
+                                              )
+                                                  .toList()
                                             ],
                                           ),
                                           const SizedBox(height: 8),
-                                          read.genres.when(
-                                            data: (genres) {
-                                              return Wrap(
-                                                direction: Axis.horizontal,
-                                                spacing: 4,
-                                                runSpacing: 8,
-                                                children: media.genreIds
-                                                    .map(
-                                                      (id) => InfoChip(
-                                                          text: genres
-                                                              .firstWhere(
-                                                                (genre) =>
-                                                                    genre.id ==
-                                                                    id,
-                                                              )
-                                                              .name),
-                                                    )
-                                                    .toList(),
-                                              );
-                                            },
-                                            error: (_, __) {
-                                              return const SizedBox.shrink();
-                                            },
-                                            loading: () {
-                                              return const CircularProgressIndicator();
-                                            },
+                                          Wrap(
+                                            direction: Axis.horizontal,
+                                            spacing: 4,
+                                            runSpacing: 8,
+                                            children: media.genreIds
+                                                .map(
+                                                  (id) => InfoChip(
+                                                      text: genres
+                                                          .firstWhere(
+                                                            (genre) =>
+                                                                genre.id == id,
+                                                          )
+                                                          .name),
+                                                )
+                                                .toList(),
                                           ),
                                         ],
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 4,
-                      ),
-                      width: Constants.mediaDetailPosterHeight *
-                              Constants.mediaPosterAspectRatio +
-                          40,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            '${media.releaseDate.year}',
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: Palette.white,
-                            ),
-                          ),
-                          const Spacer(),
-                          const Icon(
-                            Icons.star_rate_rounded,
-                            color: Palette.starOrange,
-                            size: 20,
-                          ),
-                          Text(
-                            media.voteAverage.toStringAsFixed(1),
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: Palette.white,
-                            ),
-                          ),
-                        ],
+                                  ),*/
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -244,7 +259,7 @@ class DetailsScreen extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 children: [
                   const SizedBox(height: 8),
-                  const SectionHeadline(text: Strings.overview),
+                  SectionHeadline(media.id, text: Strings.overview),
                   Text(media.overview),
                 ],
               ),
@@ -288,13 +303,14 @@ class DetailsScreen extends ConsumerWidget {
   }
 }
 
-class SectionHeadline extends StatelessWidget {
-  const SectionHeadline({super.key, required this.text});
+class SectionHeadline extends ConsumerWidget {
+  const SectionHeadline(this.id, {super.key, required this.text});
 
   final String text;
+  final int id;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,7 +326,95 @@ class SectionHeadline extends StatelessWidget {
             thickness: 2,
           ),
         ),
+        ElevatedButton(
+          onPressed: () =>
+              ref.read(mediaDetailsControllerProvider.notifier).test(id: id),
+          child: const Text('Get'),
+        ),
       ],
     );
   }
 }
+
+/*class _Cast extends ConsumerWidget {
+  const _Cast({
+    Key? key,
+    required this.person,
+  }) : super(key: key);
+
+  final List<Person> person;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final call = ref.read(movieFlowControllerProvider.notifier);
+    final theme = Theme.of(context);
+    return SliverToBoxAdapter(
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height / 4,
+        child: ListView.separated(
+          padding: const EdgeInsets.symmetric(horizontal: kMediumSpacing),
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          itemBuilder: (context, index) {
+            final actor = cast[index];
+            return Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  call.loadActorMovies(actor.id);
+                  Navigator.pushReplacement(
+                    context,
+                    PersonResultScreen.route(actor: actor),
+                  );
+                },
+                child: SizedBox(
+                  width: 125,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Image.network(
+                          actor.profilePath ?? '',
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          errorBuilder: (context, e, s) => SizedBox(
+                            height: MediaQuery.of(context).size.height / 5,
+                            child: const Center(
+                              child: Align(
+                                child: Text('No preview found'),
+                                alignment: Alignment.centerLeft,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        actor.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                      Text(
+                        actor.character,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontSize: theme.textTheme.bodySmall?.fontSize,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+          separatorBuilder: (context, index) =>
+          const SizedBox(width: kSmallSpacing),
+          itemCount: cast.take(10).length,
+        ),
+      ),
+    );
+  }
+}*/
