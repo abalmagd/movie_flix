@@ -33,6 +33,7 @@ class DetailsScreen extends ConsumerWidget {
     final size = MediaQuery.of(context).size;
     final genres = (ref.read(moviesControllerProvider).genres.value ?? []) +
         (ref.read(seriesControllerProvider).genres.value ?? []);
+    final watch = ref.watch(mediaDetailsControllerProvider);
     return Scaffold(
       extendBodyBehindAppBar: true,
       drawer: const PrimaryDrawer(),
@@ -155,63 +156,6 @@ class DetailsScreen extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                            /*Expanded(
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Wrap(
-                                            direction: Axis.horizontal,
-                                            spacing: 4,
-                                            runSpacing: 8,
-                                            children: [
-                                              if (media.adult)
-                                                const InfoChip(
-                                                  text: 'Adult',
-                                                  noOpacity: true,
-                                                  backgroundColor:
-                                                      Palette.danger,
-                                                ),
-                                              InfoChip(
-                                                text:
-                                                    '${media.voteCount.kFormat} Reviews',
-                                              ),
-                                              ...media.genreIds
-                                                  .map(
-                                                    (id) => InfoChip(
-                                                    text: genres
-                                                        .firstWhere(
-                                                          (genre) =>
-                                                      genre.id == id,
-                                                    )
-                                                        .name),
-                                              )
-                                                  .toList()
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Wrap(
-                                            direction: Axis.horizontal,
-                                            spacing: 4,
-                                            runSpacing: 8,
-                                            children: media.genreIds
-                                                .map(
-                                                  (id) => InfoChip(
-                                                      text: genres
-                                                          .firstWhere(
-                                                            (genre) =>
-                                                                genre.id == id,
-                                                          )
-                                                          .name),
-                                                )
-                                                .toList(),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),*/
                           ],
                         ),
                       ),
@@ -283,19 +227,41 @@ class DetailsScreen extends ConsumerWidget {
               ],
             ).createShader(Rect.fromLTRB(0, 0, bounds.width, bounds.height));
           },
-          child: CarouselSlider(
-            options: CarouselOptions(
-              height: double.infinity,
-              viewportFraction: 1,
-            ),
-            items: [
-              NetworkFadingImage(
+          child: watch.mediaDetails.when(
+            data: (mediaDetails) {
+              return CarouselSlider(
+                options: CarouselOptions(
+                  autoPlay: true,
+                  autoPlayInterval: const Duration(seconds: 5),
+                  height: double.infinity,
+                  viewportFraction: 1,
+                ),
+                items: mediaDetails.backdrops.map((backdrop) {
+                  return NetworkFadingImage(
+                    fit: BoxFit.cover,
+                    path: '${RemoteEnvironment.tmdbImage}'
+                        '${RemoteEnvironment.ogBackdropQuality}'
+                        '$backdrop',
+                  );
+                }).toList(),
+              );
+            },
+            error: (_, __) {
+              return NetworkFadingImage(
                 fit: BoxFit.cover,
                 path: '${RemoteEnvironment.tmdbImage}'
                     '${RemoteEnvironment.ogBackdropQuality}'
                     '${media.backdropPath}',
-              ),
-            ],
+              );
+            },
+            loading: () {
+              return NetworkFadingImage(
+                fit: BoxFit.cover,
+                path: '${RemoteEnvironment.tmdbImage}'
+                    '${RemoteEnvironment.ogBackdropQuality}'
+                    '${media.backdropPath}',
+              );
+            },
           ),
         ),
       ),

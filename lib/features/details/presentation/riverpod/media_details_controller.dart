@@ -29,7 +29,7 @@ class MediaDetailsController extends StateNotifier<MediaDetailsState> {
 
     result.fold(
       (failure) => print(failure.message),
-      (details) => print(details.toJson()),
+      (details) => state = state.copyWith(mediaDetails: AsyncData(details)),
     );
   }
 }

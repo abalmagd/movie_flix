@@ -24,9 +24,16 @@ class MoviesRepository implements BaseMediaDetailsRepository {
   @override
   Future<Map<String, dynamic>> getMovieDetails(int movieId) async {
     try {
-      final result = await _dio.get('${RemoteEnvironment.movie}/$movieId');
+      final result = await _dio.get(
+        '${RemoteEnvironment.movie}/$movieId',
+        queryParameters: {
+          'append_to_response': 'videos,images,credits,reviews,similar',
+          'include_image_language': 'en',
+        },
+      );
 
       final Map<String, dynamic> json = result.data;
+      // print(json['images']);
       return json;
     } on DioError catch (e) {
       throw Failure.handleExceptions(e);
@@ -36,7 +43,13 @@ class MoviesRepository implements BaseMediaDetailsRepository {
   @override
   Future<Map<String, dynamic>> getSeriesDetails(int seriesId) async {
     try {
-      final result = await _dio.get('${RemoteEnvironment.series}/$seriesId');
+      final result = await _dio.get(
+        '${RemoteEnvironment.series}/$seriesId',
+        queryParameters: {
+          'append_to_response': 'videos,images,credits,reviews,similar',
+          'include_image_language': 'en',
+        },
+      );
 
       final Map<String, dynamic> json = result.data;
       return json;

@@ -1,6 +1,7 @@
 import '../../home/domain/person.dart';
 
 class MediaDetails {
+  final int id;
   // Movies
   final BelongsToCollection? belongsToCollection;
   final int? runtime;
@@ -13,8 +14,11 @@ class MediaDetails {
   final List<Season>? seasons;
   final String? type;
   final List<Person> cast;
+  final List<String> backdrops;
+  final List<String> posters;
 
   MediaDetails({
+    required this.id,
     required this.belongsToCollection,
     required this.runtime,
     required this.status,
@@ -25,10 +29,13 @@ class MediaDetails {
     required this.seasons,
     required this.type,
     required this.cast,
+    required this.backdrops,
+    required this.posters,
   });
 
   factory MediaDetails.fromJson(Map<String, dynamic> json) {
     return MediaDetails(
+      id: json['id'],
       belongsToCollection: json['belongs_to_collection'] == null
           ? null
           : BelongsToCollection.fromJson(json['belongs_to_collection']),
@@ -46,10 +53,17 @@ class MediaDetails {
       type: json['type'],
       cast: List<Person>.from(
           json['cast'].map((person) => Person.fromJson(person))),
+      backdrops: List.from(json['images']['backdrops'])
+          .map((backdrop) => backdrop['file_path'] as String)
+          .toList(),
+      posters: List.from(json['images']['posters'])
+          .map((backdrop) => backdrop['file_path'] as String)
+          .toList(),
     );
   }
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'belongs_to_collection': belongsToCollection?.toJson(),
         'runtime': runtime,
         'status': status,
@@ -83,7 +97,7 @@ class BelongsToCollection {
       id: json['id'],
       name: json['name'],
       posterPath: json['poster_path'],
-      backdropPath: json['backdrop_path'],
+      backdropPath: json['backdrop_path'] ?? '',
     );
   }
 
